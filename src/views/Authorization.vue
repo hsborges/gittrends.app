@@ -67,7 +67,7 @@ div.content
   height: 100vh
 header
   background-color: background-color
-img
+article > img
   @apply flex-shrink opacity-50 max-w-sm
 .btn
   background-color: background-color

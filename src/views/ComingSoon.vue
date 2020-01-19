@@ -2,7 +2,7 @@
   <div class="page">
     <section class="content flex flex-col">
       <div class="flex justify-center pt-10">
-        <img class="w-12 h-12" ca src="@/assets/images/logo-white.png" />
+        <img class="w-12 h-12" src="@/assets/images/logo-white.png" />
       </div>
       <div class="flex justify-center pt-1">
         <span class="text-3xl font-bold">GitTrends</span>
