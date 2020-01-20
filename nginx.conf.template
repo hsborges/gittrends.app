@@ -8,19 +8,24 @@ events {
 http {
   include       /etc/nginx/mime.types;
   default_type  application/octet-stream;
-  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                    '$status $body_bytes_sent "$http_referer" '
-                    '"$http_user_agent" "$http_x_forwarded_for"';
+  log_format  main  '${DOLAR}remote_addr - ${DOLAR}remote_user [${DOLAR}time_local] "${DOLAR}request" '
+                    '${DOLAR}status ${DOLAR}body_bytes_sent "${DOLAR}http_referer" '
+                    '"${DOLAR}http_user_agent" "${DOLAR}http_x_forwarded_for"';
   access_log  /var/log/nginx/access.log  main;
   sendfile        on;
   keepalive_timeout  65;
   server {
     listen       80;
     server_name  localhost;
+    location /api {
+      proxy_set_header Host ${DOLAR}host;
+      proxy_set_header X-Real-IP ${DOLAR}remote_addr;
+      proxy_pass http://${API_HOST}:${API_PORT};
+    }
     location / {
       root   /app;
       index  index.html;
-      try_files $uri $uri/ /index.html;
+      try_files ${DOLAR}uri ${DOLAR}uri/ /index.html;
     }
     error_page   500 502 503 504  /50x.html;
     location = /50x.html {
