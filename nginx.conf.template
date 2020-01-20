@@ -18,9 +18,11 @@ http {
     listen       80;
     server_name  localhost;
     location /api {
+      rewrite /api/(.*) /${DOLAR}1  break;
       proxy_set_header Host ${DOLAR}host;
       proxy_set_header X-Real-IP ${DOLAR}remote_addr;
       proxy_pass http://${API_HOST}:${API_PORT};
+      proxy_redirect     off;
     }
     location / {
       root   /app;
