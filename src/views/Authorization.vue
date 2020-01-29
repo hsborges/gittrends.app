@@ -1,11 +1,5 @@
 <template>
   <div class="content flex flex-col w-full">
-    <header class="flex items-center justify-center w-full h-16">
-      <a class="flex items-center justify-center" v-bind:href="'/'">
-        <img class="w-10 h-10 mx-2" src="@/assets/images/logo-white.png" />
-        <span class="text-4xl text-white font-bold">GitTrends</span>
-      </a>
-    </header>
     <article v-if="success" class="flex flex-col flex-grow items-center">
       <div
         class="flex flex-grow items-center max-w-lg text-4xl font-bold pb-24"
@@ -23,8 +17,9 @@
           Could you donate an access token?
         </span>
         <span class="text-xl max-w-md opacity-75 text-center">
-          We daily make thousands of GitHub API requests to keep our database
-          updated. By donating an access token we can speedup the process.
+          We make thousands of GitHub API requests to keep our database updated.
+          By donating an access token we can add more projects to our dataset
+          and speedup the process.
         </span>
         <a
           class="btn text-xl my-8 hvr-grow"
