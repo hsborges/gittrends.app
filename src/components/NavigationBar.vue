@@ -70,16 +70,10 @@ export default {
           active: this.$route.name === "home"
         },
         {
-          name: "Explorer",
-          class: "fas fa-map",
-          url: "/explorer",
-          active: this.$route.name === "explorer"
-        },
-        {
-          name: "Truck-Factor",
-          class: "fas fa-truck",
-          url: "/truck-factor",
-          active: this.$route.name === "truck-factor"
+          name: "Explore",
+          class: "fas fa-th",
+          url: "/explore",
+          active: this.$route.name === "explore"
         },
         {
           name: "About",
@@ -102,19 +96,15 @@ div.beta
 
 .navbar
   min-width: 15vw;
-
   .options
     .option:hover
       @apply: font-bold;
       span
          @apply: block
-
     .option.first
       @apply: border-t-2;
-
     .option.active
       @apply: font-bold text-primary bg-white;
-
   footer > .social > a
     @apply: text-white font-bold text-xl;
     @apply: px-3;

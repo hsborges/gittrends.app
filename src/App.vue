@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="flex flex-col lg:flex-row">
+  <div id="app" class="flex flex-col lg:flex-row max-w-full">
     <Menu></Menu>
     <router-view />
   </div>
@@ -24,4 +24,5 @@ export default {
   font-family: 'PT Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 </style>

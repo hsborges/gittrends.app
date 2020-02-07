@@ -43,14 +43,7 @@
         ></Card>
       </div>
     </div>
-    <div
-      class="footer flex justify-center font-bold text-secondary-lighter pb-2 pt-5 lg:pt-0 leading-none"
-    >
-      made with<i class="fas fa-heart px-1"></i> by
-      <a class="pl-1" href="https://github.com/hsborges" target="_blank">
-        hsborges
-      </a>
-    </div>
+    <Love class="mt-24"></Love>
   </div>
 </template>
 
@@ -58,6 +51,7 @@
 import { random } from "lodash";
 import axios from "axios";
 
+import Love from "@/components/Love.vue";
 import Card from "@/components/home/RepositoryCard.vue";
 
 export default {
@@ -68,7 +62,7 @@ export default {
       repositories: null
     };
   },
-  components: { Card },
+  components: { Love, Card },
   mounted: function() {
     axios
       .get(`/api/search/repos?limit=9&random=${random(10)}`)

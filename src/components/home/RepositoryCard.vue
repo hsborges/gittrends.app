@@ -1,7 +1,7 @@
 <template>
   <router-link
     class="flex border border-primary rounded"
-    :to="`/explorer?open=${repository.full_name}`"
+    :to="`/explore?open=${repository.full_name}`"
   >
     <div class="flex flex-grow items-center text-sm px-2 py-1">
       <span class="hidden lg:block leading-none">
