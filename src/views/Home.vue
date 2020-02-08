@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     onEnter: function() {
-      this.$router.push(`/explorer?query=${this.query}`);
+      this.$router.push(`/explore?query=${this.query}`);
     }
   }
 };

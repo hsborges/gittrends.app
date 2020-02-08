@@ -1,22 +1,31 @@
 <template>
-  <div class="content flex flex-col w-full">
-    <article v-if="success" class="flex flex-col flex-grow items-center">
-      <div
-        class="flex flex-grow items-center max-w-lg text-4xl font-bold pb-24"
-      >
+  <div class="content flex flex-col flex-grow w-full items-center md:mb-24">
+    <article
+      v-if="success"
+      class="flex flex-col flex-grow w-5/6 items-center justify-center  mb-24"
+    >
+      <div class="flex items-center text-3xl md:text-4xl font-bold pb-12">
         <span class="text-center">
           Hey {{ login }}, thank you very much for your contribution
-          <i class="far fa-smile-wink"></i>.
+          <i class="far fa-smile-wink text-3xl"></i>
         </span>
       </div>
-      <img class="float-none" src="@/assets/images/github-robot.png" />
+      <a
+        href="/"
+        class="bg-secondary-lighter rounded rounded-md text-white font-bold text-2xl px-3 py-1"
+      >
+        <i class="fas fa-home pr-1"></i>Home
+      </a>
     </article>
-    <article v-else class="flex flex-col md:flex-row flex-grow items-center">
-      <div class="flex flex-col flex-grow items-center pb-32">
-        <span class="text-4xl max-w-2md pb-6 text-center">
+    <article
+      v-else
+      class="flex flex-col md:flex-row flex-grow w-5/6 items-center"
+    >
+      <div class="flex flex-col flex-grow items-center">
+        <span class="text-2xl md:text-4xl max-w-2md pt-8 pb-6 text-center">
           Could you donate an access token?
         </span>
-        <span class="text-xl max-w-md opacity-75 text-center">
+        <span class="text-lg md:text-xl max-w-md opacity-75 text-center">
           We make thousands of GitHub API requests to keep our database updated.
           By donating an access token we can add more projects to our dataset
           and speedup the process.
@@ -28,14 +37,11 @@
         >
           <i class="fab fa-github"></i> Authorize
         </a>
-        <span class="text-sm max-w-md opacity-75 text-center">
+        <span class="text-sm opacity-75 text-center">
           * you can revoke this authorization later on the GitHub website
         </span>
       </div>
-      <img
-        class="float-right sm:float-none"
-        src="@/assets/images/github-robot.png"
-      />
+      <img class="flex w-2/3" src="@/assets/images/github-robot.png" />
     </article>
   </div>
 </template>
@@ -53,13 +59,17 @@ export default {
         scope: "public_repo read:org read:user user:email"
       })}`
     };
+  },
+  mounted() {
+    if (this.success) {
+      this.$emit("dismissAlert");
+      this.$cookies.set("token-donated", true, "1m");
+    }
   }
 };
 </script>
 
 <style lang="stylus" scoped>
-div.content
-  height: 100vh
 header
   background-color: background-color
 article > img

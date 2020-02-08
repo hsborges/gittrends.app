@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col md:flex-row w-full py-5 md:py-10 h-full">
     <div
-      v-if="stargazers && stargazers.length"
+      v-if="stargazers"
       class="flex flex-col justify-center items-center w-full md:w-4/6"
     >
       <div id="timeline" class="flex w-full h-40 md:h-64"></div>
@@ -105,16 +105,7 @@
         </tbody>
       </table>
     </div>
-    <div
-      v-if="!stargazers || !stargazers.length"
-      class="flex flex-col flex-grow justify-center items-center px-4"
-    >
-      <i class="far fa-grin-beam-sweat text-5xl text-primary"></i>
-      <span class="text-center pt-4">
-        Hey, we are sorry for that, but we still collecting the data and it will
-        be available soon!
-      </span>
-    </div>
+    <Loading v-else class="flex flex-grow h-40"></Loading>
   </div>
 </template>
 
@@ -125,9 +116,12 @@ import numeral from "numeral";
 import axios from "axios";
 import c3 from "c3";
 
+import Loading from "@/components/Loading.vue";
+
 export default {
   name: "stargazersTimeline",
   props: ["repository"],
+  components: { Loading },
   data() {
     return {
       baseUrl: `/api/repos/${this.repository.id}`,

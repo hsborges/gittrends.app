@@ -1,7 +1,28 @@
 <template>
-  <div id="app" class="flex flex-col lg:flex-row max-w-full">
-    <Menu></Menu>
-    <router-view />
+  <div id="app" class="flex flex-col flex-grow">
+    <div
+      v-if="showAlert"
+      class="flex justify-center w-full h-6 bg-secondary-dark z-50"
+    >
+      <a class="text-white text-center font-bold" href="/authorize">
+        <i class="fas fa-bullhorn px-1"></i>
+        <span class="hidden md:inline leading-normal">
+          Hey, we need your support to expand our dataset. Click here to donate
+          a GitHub access token
+        </span>
+        <span class="md:hidden text-sm leading-normal">
+          Liked it? Donate a token :)
+        </span>
+      </a>
+      <i
+        class="fas fa-times text-white absolute right-0 leading-normal px-2 cursor-pointer"
+        @click="closeAlert"
+      ></i>
+    </div>
+    <div class="flex flex-col flex-grow lg:flex-row max-w-full">
+      <Menu></Menu>
+      <router-view @dismissAlert="closeAlert" />
+    </div>
   </div>
 </template>
 
@@ -10,7 +31,17 @@ import Menu from "@/components/NavigationBar.vue";
 
 export default {
   name: "app",
-  components: { Menu }
+  components: { Menu },
+  data() {
+    return {
+      showAlert: !this.$cookies.get("token-donated")
+    };
+  },
+  methods: {
+    closeAlert() {
+      this.showAlert = false;
+    }
+  }
 };
 </script>
 
@@ -19,7 +50,7 @@ export default {
 
 #app
   @apply text-secondary;
-  width: 100vw;
+  max-width: 100vw;
   min-height: 100vh;
   font-family: 'PT Sans', sans-serif;
   -webkit-font-smoothing: antialiased;

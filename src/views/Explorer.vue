@@ -1,15 +1,14 @@
 <template>
   <div class="explorer flex flex-col w-11/12 lg:w-4/6 items-center">
-    <div class="filter w-full py-2">
+    <div v-if="filter" class="filter w-full py-2">
       <div class="inline-flex text-secondary text-sm md:text-base">
         <span class="py-1 leading-tight">Language:</span>
         <select
           class="appearance-none pr-2 py-1 leading-tight font-bold cursor-pointer"
           v-model="filter.language"
-          :value="filter.language"
           @change="update"
         >
-          <option :value="null" selected>All &#9662;</option>
+          <option :value="undefined">All &#9662;</option>
           <option
             v-for="lang in languages"
             :key="lang.primary_language"
@@ -19,16 +18,21 @@
         </select>
       </div>
 
-      <div
-        class="search flex w-3/6 md:w-2/6 px-2 float-right text-sm md:text-base"
-      >
+      <div class="search w-3/6 md:w-2/6 px-2 float-right text-sm md:text-base">
         <input
+          class="w-4/6"
           type="text"
-          class="flex w-full"
           v-model="filter.query"
           @keypress.enter="update"
         />
-        <a class="cursor-pointer text-sm opacity-25 hover:opacity-100">
+        <a
+          class="relative float-right cursor-pointer text-sm opacity-25 hover:opacity-100 pl-2"
+        >
+          <i class="fas fa-times py-1" @click="reset() && update()"></i>
+        </a>
+        <a
+          class="relative float-right cursor-pointer text-sm opacity-25 hover:opacity-100"
+        >
           <i class="fas fa-search py-1" @click="update"></i>
         </a>
       </div>
@@ -80,30 +84,36 @@
         </div>
       </div>
     </div>
-    <div v-if="!repository" class="paginator">
-      <span v-if="filter.page > 0" @click="updatePage(0)">&#171;</span>
-      <span v-if="filter.page > 0" @click="updatePage((filter.page -= 1))">
+    <div v-if="filter && !repository" class="paginator text-sm sm:text-lg">
+      <span v-if="filter.page > 0" @click="update({ page: 0 })">&#171;</span>
+      <span
+        v-if="filter.page > 0"
+        @click="update({ page: (filter.page -= 1) })"
+      >
         &#8249;
       </span>
-      <span v-if="filter.page > 0" @click="updatePage((filter.page -= 1))">
+      <span
+        v-if="filter.page > 0"
+        @click="update({ page: (filter.page -= 1) })"
+      >
         {{ filter.page }}
       </span>
       <span class="active">{{ filter.page + 1 }}</span>
       <span
         v-if="repositories && repositories.length == filter.limit"
-        @click="updatePage((filter.page += 1))"
+        @click="update({ page: (filter.page += 1) })"
         >{{ filter.page + 2 }}</span
       >
       <span
         v-if="repositories && repositories.length == filter.limit"
-        @click="updatePage((filter.page += 1))"
+        @click="update({ page: (filter.page += 1) })"
         >&#8250;</span
       >
     </div>
     <Details
       v-if="repository"
-      :repository="repository"
-      @dismiss="dismiss"
+      :id="repository.id"
+      @dismiss="showDetails(null)"
       class="w-full h-full"
     ></Details>
     <Love class="mt-10"></Love>
@@ -131,65 +141,56 @@ export default {
       repository: null
     };
   },
-  beforeMount() {
-    this.reset();
-    axios("/api/search/languages").then(({ data }) => (this.languages = data));
+  async created() {
+    await axios("/api/search/languages").then(
+      ({ data }) => (this.languages = data)
+    );
   },
-  mounted() {
-    this.filter = {
-      ...this.filter,
-      ..._.pick(this.$route.query, ["query", "language"])
-    };
+  async mounted() {
+    this.reset();
 
-    this.filter.query = this.$route.query.open || this.filter.query;
+    const { open, query, language } = this.$route.query;
+    this.filter = { ...this.filter, language, query: open || query };
 
-    this.update().then(() => {
-      if (this.filter.query && this.repositories.length === 1)
+    return this.update().then(() => {
+      if ((query || open) && this.repositories.length === 1)
         this.showDetails(this.repositories[0]);
     });
   },
   methods: {
-    reset() {
-      this.repository = null;
-      this.repositories = null;
-      this.filter = {
-        language: null,
-        query: null,
-        limit: 10,
-        page: 0,
-        sort: "stargazers"
-      };
+    async reset() {
+      this.repositories = this.repository = null;
+      this.filter = { limit: 10, page: 0 };
     },
-    async update() {
-      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-
-      const query = _(this.filter)
+    async updateUrlQuery() {
+      const queryParams = _(this.filter)
         .pick(["language", "query"])
         .pickBy((v) => v)
         .value();
 
-      if (!_.isEmpty(query) && !_.isEqual(this.$route.query, query))
-        this.$router.replace({ query });
-
-      await axios(`/api/search/repos?${qs.encode(this.filter)}`).then((res) => {
-        this.repository = null;
-        this.repositories = res.data;
-      });
+      if (!_.isEqual(this.$route.query, queryParams))
+        this.$router.replace({ query: queryParams });
     },
-    async updatePage(page) {
-      this.filter.page = page;
-      await this.update();
+    async update({
+      page = this.filter.page,
+      language = this.filter.language,
+      query = this.filter.query
+    } = {}) {
+      this.filter = { ...this.filter, page, language, query };
+      this.updateUrlQuery();
+
+      this.repositories = (
+        await axios(`/api/search/repos?${qs.encode(this.filter)}`)
+      ).data;
+
+      setTimeout(
+        () => window.scrollTo({ top: 0, left: 0, behavior: "smooth" }),
+        150
+      );
     },
     async showDetails(repo) {
-      if (this.repository && this.repository.id === repo.id) return;
-
-      this.filter.query = repo.full_name;
-      this.filter.language = repo.primary_language;
-      await this.update();
-
-      await axios(`/api/repos/${repo.id}`).then(({ data }) => {
-        this.repository = data;
-      });
+      this.repository = repo;
+      if (repo) this.$router.replace({ query: { open: repo.full_name } });
     },
     formatNumber: (v, simple) => {
       if (v < 1000 || simple) return numeral(v).format("0,0");
@@ -197,18 +198,11 @@ export default {
     },
     formatTime: (t) => {
       return moment(t).fromNow();
-    },
-    dismiss() {
-      this.reset();
-      this.update();
     }
   },
   watch: {
     "$route.query": function(to) {
-      if (_.isEmpty(to)) {
-        this.reset();
-        this.update();
-      }
+      if (_.isEmpty(to)) this.reset() && this.update();
     }
   }
 };
@@ -231,9 +225,9 @@ export default {
         @apply pr-2;
 
   .paginator
-    @apply: pt-6 text-lg;
+    @apply: pt-6;
     span
-      @apply: border border-secondary-200 px-6 py-1 cursor-pointer;
+      @apply: border border-secondary-200 px-4 py-1 cursor-pointer;
       &:hover
         @apply: bg-primary-500 font-bold text-secondary;
     span.active

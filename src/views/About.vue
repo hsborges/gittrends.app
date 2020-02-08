@@ -17,10 +17,11 @@
       <article>
         <h1>How it works?</h1>
         <p>
-          To keep this tool updated have a service running on background making
-          millions of requests per hour to GitHub API. The data obtained from
-          these requests are stored in a non-relational database, while is also
-          processed, analyzed, and published in this website.
+          To keep our database updated we have a web service running on
+          background making millions of requests per hour to GitHub service API.
+          The data obtained from these requests are stored in a non-relational
+          database, while is also processed, analyzed, and published in this
+          website.
         </p>
         <p>
           As GitHub limits the number of requests to their servers, we need as
@@ -67,7 +68,7 @@
         </div>
       </article>
       <article id="references">
-        <h1>Publications</h1>
+        <h1>Academic Publications</h1>
         <ul class="reference-list">
           <li
             v-for="(reference, index) in references"
