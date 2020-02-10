@@ -21,6 +21,11 @@ const routes = [
     component: () => import("../views/Explorer.vue")
   },
   {
+    path: "/compare",
+    name: "compare",
+    component: () => import("../views/Comparator.vue")
+  },
+  {
     path: "/authorize",
     name: "authorize",
     component: () => import("../views/Authorization.vue")

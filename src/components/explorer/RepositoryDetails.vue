@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="repository"
-    class="details flex flex-col w-full border border-secondary-200 rounded"
+    class="details flex flex-col border border-secondary-200 rounded"
   >
     <div class="header flex-block py-4 px-2 bg-primary text-center">
       <a
@@ -68,6 +68,12 @@ export default {
   },
   created() {
     axios(`/api/repos/${this.id}`).then(({ data }) => (this.repository = data));
+  },
+  mounted() {
+    setTimeout(
+      () => window.scrollTo({ top: 0, left: 0, behavior: "smooth" }),
+      100
+    );
   }
 };
 </script>

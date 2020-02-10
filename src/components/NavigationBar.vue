@@ -76,6 +76,12 @@ export default {
           active: this.$route.name === "explore"
         },
         {
+          name: "Compare",
+          class: "fas fa-exchange-alt",
+          url: "/compare",
+          active: this.$route.name === "compare"
+        },
+        {
           name: "About",
           class: "fas fa-info-circle",
           url: "/about",

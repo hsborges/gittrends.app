@@ -1,6 +1,6 @@
 <template>
-  <div class="explorer flex flex-col w-11/12 lg:w-4/6 items-center">
-    <div v-if="filter" class="filter w-full py-2">
+  <div class="explorer flex flex-col flex-grow items-center">
+    <div v-if="filter" class="filter w-11/12 lg:w-4/6 py-2">
       <div class="inline-flex text-secondary text-sm md:text-base">
         <span class="py-1 leading-tight">Language:</span>
         <select
@@ -37,7 +37,78 @@
         </a>
       </div>
     </div>
-    <div v-if="repositories && !repository" class="items block w-full">
+    <div
+      v-if="repositories && !repository"
+      class="items flex-block w-11/12 lg:w-4/6"
+    >
+      <div
+        v-if="!repositories.length"
+        class="flex flex-col items-center text-center p-6 md:p-16"
+      >
+        <p>
+          Sorry, we did not find any repositories matching with this query.
+          <br />
+          <a @click="showForm">Click here</a> to send us a request for adding
+          this repository in our database.
+        </p>
+        <div
+          v-if="request && !request.success"
+          class="form flex-block w-full sm:w-2/3 md:pr-12 pt-6"
+        >
+          <div class="md:flex md:items-center mb-3">
+            <div class="md:w-1/4 md:text-right">
+              <label for="repository">Repository*</label>
+            </div>
+            <div class="md:w-3/4">
+              <input
+                id="repository"
+                v-model="request.repository"
+                placeholder="owner/name"
+              />
+            </div>
+          </div>
+          <div class="md:flex md:items-center mb-3">
+            <div class="md:w-1/4 md:text-right">
+              <label for="inline-username">Notify-me</label>
+            </div>
+            <div class="md:w-3/4">
+              <input
+                type="email"
+                v-model="request.email"
+                placeholder="my@email.com"
+              />
+            </div>
+          </div>
+          <div v-if="request.feedback" class="md:flex md:items-center">
+            <div class="md:w-full text-right text-red-500">
+              * {{ request.feedback }}
+            </div>
+          </div>
+          <div class="md:flex md:items-center">
+            <div class="md:w-1/4"></div>
+            <div class="md:w-3/4 md:text-left">
+              <button type="button" @click="sendRequest">
+                <i
+                  class="fas pr-1"
+                  :class="{
+                    'fa-paper-plane': !request.sending,
+                    'fa-spinner fa-spin': request.sending
+                  }"
+                ></i>
+                Send Request
+              </button>
+            </div>
+          </div>
+        </div>
+        <a
+          v-if="request && request.success"
+          href="/authorize"
+          target="_blank"
+          class="pt-4"
+        >
+          Suggestion sent, please consider donate a GitHub access token :)
+        </a>
+      </div>
       <div
         v-for="repo in repositories"
         :key="repo.id"
@@ -84,7 +155,10 @@
         </div>
       </div>
     </div>
-    <div v-if="filter && !repository" class="paginator text-sm sm:text-lg">
+    <div
+      v-if="filter && !repository && repositories && repositories.length"
+      class="paginator text-sm sm:text-lg"
+    >
       <span v-if="filter.page > 0" @click="update({ page: 0 })">&#171;</span>
       <span
         v-if="filter.page > 0"
@@ -114,9 +188,9 @@
       v-if="repository"
       :id="repository.id"
       @dismiss="showDetails(null)"
-      class="w-full h-full"
+      class="w-11/12 lg:w-4/6"
     ></Details>
-    <Love class="mt-10"></Love>
+    <Love class="flex flex-grow items-end mt-10"></Love>
   </div>
 </template>
 
@@ -138,7 +212,8 @@ export default {
       filter: null,
       languages: null,
       repositories: null,
-      repository: null
+      repository: null,
+      request: null
     };
   },
   async created() {
@@ -176,6 +251,7 @@ export default {
       language = this.filter.language,
       query = this.filter.query
     } = {}) {
+      this.repository = null;
       this.filter = { ...this.filter, page, language, query };
       this.updateUrlQuery();
 
@@ -198,6 +274,50 @@ export default {
     },
     formatTime: (t) => {
       return moment(t).fromNow();
+    },
+    async showForm() {
+      this.request = {
+        repository: null,
+        email: null,
+        feedback: null,
+        sending: null,
+        success: null
+      };
+    },
+    async sendRequest() {
+      if (!this.request.repository)
+        return (this.request.feedback = "Repository is a mandatory field!");
+      if (!/.+\/.+/gi.test(this.request.repository))
+        return (this.request.feedback = "Invalid repository format!");
+
+      this.request.sending = true;
+      await axios(`https://api.github.com/repos/${this.request.repository}`)
+        .catch((res) => {
+          if (res.response && res.response.status !== 404)
+            return Promise.resolve();
+          throw res;
+        })
+        .then(() =>
+          axios({
+            method: "POST",
+            url: "/api/requests",
+            data: _.pick(this.request, ["repository", "email"]),
+            timeout: 10000
+          }).then(() => (this.request.success = true))
+        )
+        .catch((res) => {
+          if (
+            res.response &&
+            res.response.status === 404 &&
+            res.response.config.url.indexOf("api.github.com")
+          )
+            return (this.request.feedback =
+              "Repository not found (only public are accepted).");
+          return (this.request.feedback =
+            "An error has occurred, please try later.");
+        });
+
+      this.request.sending = false;
     }
   },
   watch: {
@@ -223,6 +343,19 @@ export default {
         @apply: cursor-pointer bg-primary-100;
       .counters span
         @apply pr-2;
+    a
+      @apply text-primary underline cursor-pointer font-bold;
+    .form
+      input
+        @apply bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-1 px-4 text-gray-700 leading-tight;
+        &:focus
+          @apply border-primary bg-white;
+      label
+        @apply block text-gray-500 font-bold mb-0 pr-4;
+      button
+        @apply shadow bg-primary-lighter text-white font-bold py-1 px-4 mt-2 rounded;
+        &:hover
+          @apply bg-primary;
 
   .paginator
     @apply: pt-6;
