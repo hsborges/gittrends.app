@@ -120,7 +120,9 @@
             <i v-if="!repo.homepage" class="fas fa-book"></i>
             <img
               v-else
-              :src="`http://www.google.com/s2/favicons?domain=${repo.homepage}`"
+              :src="
+                `https://www.google.com/s2/favicons?domain=${repo.homepage}`
+              "
             />
           </div>
           <div class="content flex-block flex-grow py-2 pr-3">

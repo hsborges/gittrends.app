@@ -60,7 +60,7 @@ export default {
   data() {
     return {
       urls: {
-        github: "http://www.github.com/hsborges/gittrends.app"
+        github: "https://www.github.com/hsborges/gittrends.app"
       },
       options: [
         {
