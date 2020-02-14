@@ -26,7 +26,7 @@
       <h1>II. Popularity</h1>
       <div class="flex flex-grow justify-center">
         <Stargazers
-          v-if="repository._resources.stargazers"
+          v-if="repository._meta && repository._meta.stargazers"
           :repository="repository"
         ></Stargazers>
         <NotAvailable v-else></NotAvailable>

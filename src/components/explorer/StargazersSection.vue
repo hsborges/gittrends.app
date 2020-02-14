@@ -59,7 +59,7 @@
             <td class="flex flex-shrink-0">
               <img
                 :src="
-                  `https://avatars2.githubusercontent.com/u/${first.user.id}`
+                  `https://avatars2.githubusercontent.com/u/${first.user._id}`
                 "
                 width="40"
                 class="rounded mr-2 opacity-80 m-1"
@@ -83,7 +83,7 @@
             <td class="flex flex-shrink-0">
               <img
                 :src="
-                  `https://avatars2.githubusercontent.com/u/${last.user.id}`
+                  `https://avatars2.githubusercontent.com/u/${last.user._id}`
                 "
                 width="40"
                 class="rounded mr-2 opacity-80 m-1"
@@ -124,7 +124,7 @@ export default {
   components: { Loading },
   data() {
     return {
-      baseUrl: `/api/repos/${this.repository.id}`,
+      baseUrl: `/api/repos/${this.repository._id}`,
       stargazers: null,
       first: null,
       last: null,

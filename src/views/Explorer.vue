@@ -11,9 +11,9 @@
           <option :value="undefined">All &#9662;</option>
           <option
             v-for="lang in languages"
-            :key="lang.primary_language"
-            :value="lang.primary_language"
-            >{{ lang.primary_language }}</option
+            :key="lang.language"
+            :value="lang.language"
+            >{{ lang.language }}</option
           >
         </select>
       </div>
@@ -111,7 +111,7 @@
       </div>
       <div
         v-for="repo in repositories"
-        :key="repo.id"
+        :key="repo._id"
         class="item flex flex-col"
         @click="showDetails(repo)"
       >
@@ -129,12 +129,9 @@
             <p class="font-bold text-secondary">{{ repo.full_name }}</p>
             <p class="text-sm text-secondary-lighter">{{ repo.description }}</p>
             <p class="counters flex text-sm text-secondary-lighter">
-              <span
-                v-if="repo.primary_language"
-                title="Primary programming language"
-              >
+              <span v-if="repo.language" title="Primary programming language">
                 <i class="fas fa-code"></i>
-                {{ repo.primary_language }}
+                {{ repo.language }}
               </span>
               <span title="Number of stars">
                 <i class="fas fa-star"></i>
@@ -188,7 +185,7 @@
     </div>
     <Details
       v-if="repository"
-      :id="repository.id"
+      :id="repository._id"
       @dismiss="showDetails(null)"
       class="w-11/12 lg:w-4/6"
     ></Details>

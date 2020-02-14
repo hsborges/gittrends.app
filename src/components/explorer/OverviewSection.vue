@@ -41,7 +41,7 @@ export default {
         {
           text: "Language",
           icon: "fas fa-code",
-          value: this.repository.primary_language
+          value: this.repository.language
         },
         {
           text: "Owner",
