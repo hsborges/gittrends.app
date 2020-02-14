@@ -204,6 +204,9 @@ export default {
         keys: { x: "date", value: ["stargazers"] },
         unload: true
       });
+
+      if (this.peak.stargazers > _.meanBy(this.stargazers, (s) => s[1]) * 5)
+        this.graph.axis.types({ y: "log" });
     }
   }
 };
