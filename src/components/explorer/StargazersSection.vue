@@ -61,8 +61,7 @@
                 :src="
                   `https://avatars2.githubusercontent.com/u/${first.user._id}`
                 "
-                width="40"
-                class="rounded mr-2 opacity-80 m-1"
+                class="rounded mr-2 opacity-80 m-1 w-12 h-12"
               />
               <div class="flex-grow">
                 <a
@@ -85,8 +84,7 @@
                 :src="
                   `https://avatars2.githubusercontent.com/u/${last.user._id}`
                 "
-                width="40"
-                class="rounded mr-2 opacity-80 m-1"
+                class="rounded mr-2 opacity-80 m-1 w-12 h-12"
               />
               <div class="flex-grow">
                 <a
@@ -206,8 +204,6 @@ export default {
         keys: { x: "date", value: ["stargazers"] },
         unload: true
       });
-
-      this.graph.axis.types({ y: "log" });
     }
   }
 };
