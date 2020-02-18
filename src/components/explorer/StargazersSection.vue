@@ -173,11 +173,13 @@ export default {
     formatDate: (d, f) => moment.parseZone(d).format(`ll${f ? "l" : ""}`),
     formatNumber: (n) => numeral(n).format("0,0"),
     getStargazersLastWeek() {
-      return this.stargazers[this.stargazers.length - 1][1];
+      return this.stargazers[this.stargazers.length - 2][1];
     },
     getStargazersLastMonth() {
-      const length = this.stargazers.length;
-      return this.stargazers.slice(length - 4).reduce((m, v) => m + v[1], 0);
+      return this.stargazers
+        .slice(0, -1)
+        .slice(-4)
+        .reduce((m, v) => m + v[1], 0);
     },
     loadCumulative() {
       this.graph.load({
