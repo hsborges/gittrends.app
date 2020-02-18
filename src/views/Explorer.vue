@@ -1,10 +1,10 @@
 <template>
   <div class="explorer flex flex-col flex-grow items-center">
     <div v-if="filter" class="filter w-11/12 lg:w-4/6 py-2">
-      <div class="inline-flex text-secondary text-sm md:text-base">
+      <div class="inline-flex w-1/2 text-secondary text-sm md:text-base">
         <span class="py-1 leading-tight">Language:</span>
         <select
-          class="appearance-none pr-2 py-1 leading-tight font-bold cursor-pointer"
+          class="appearance-none pr-2 py-1 leading-tight font-bold cursor-pointer overflow-hidden"
           v-model="filter.language"
           @change="update"
         >
@@ -18,22 +18,24 @@
         </select>
       </div>
 
-      <div class="search w-3/6 md:w-2/6 px-2 float-right text-sm md:text-base">
+      <div
+        class="search flex w-1/2 md:w-1/3 px-2 float-right text-sm md:text-base"
+      >
         <input
-          class="w-4/6"
+          class="flex flex-grow overflow-hidden"
           type="text"
           v-model="filter.query"
           @keypress.enter="update"
         />
         <a
-          class="relative float-right cursor-pointer text-sm opacity-25 hover:opacity-100 pl-2"
-        >
-          <i class="fas fa-times py-1" @click="reset() && update()"></i>
-        </a>
-        <a
-          class="relative float-right cursor-pointer text-sm opacity-25 hover:opacity-100"
+          class="flex cursor-pointer text-sm opacity-25 hover:opacity-100 pl-1"
         >
           <i class="fas fa-search py-1" @click="update"></i>
+        </a>
+        <a
+          class="flex cursor-pointer text-sm opacity-25 hover:opacity-100 pl-1 md:pl-2"
+        >
+          <i class="fas fa-times py-1" @click="reset() && update()"></i>
         </a>
       </div>
     </div>
