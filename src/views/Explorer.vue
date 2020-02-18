@@ -262,12 +262,18 @@ export default {
 
       setTimeout(
         () => window.scrollTo({ top: 0, left: 0, behavior: "smooth" }),
-        150
+        50
       );
+
+      this.$gtag.event("search", { search_term: qs.encode(this.filter) });
     },
     async showDetails(repo) {
       this.repository = repo;
-      if (repo) this.$router.replace({ query: { open: repo.full_name } });
+      if (repo) {
+        const query = { open: repo.full_name };
+        this.$router.replace({ query });
+        this.$gtag.pageview({ page_path: `/explore?${query}` });
+      }
     },
     formatNumber: (v, simple) => {
       if (v < 1000 || simple) return numeral(v).format("0,0");
