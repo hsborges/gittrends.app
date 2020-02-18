@@ -197,10 +197,9 @@ export default {
     },
     loadGained() {
       this.graph.load({
-        json: this.stargazers.reduce(
-          (m, s) => m.concat({ date: s[0], stargazers: s[1] }).slice(0, -1),
-          []
-        ),
+        json: this.stargazers
+          .reduce((m, s) => m.concat({ date: s[0], stargazers: s[1] }), [])
+          .slice(0, -1),
         keys: { x: "date", value: ["stargazers"] },
         unload: true
       });
