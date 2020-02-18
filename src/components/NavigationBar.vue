@@ -1,5 +1,7 @@
 <template>
-  <nav class="navbar flex lg:flex-grow-0 lg:flex-col bg-primary text-white">
+  <nav
+    class="navbar sticky md:h-screen top-0 flex lg:flex-grow-0 lg:flex-col bg-primary text-white"
+  >
     <div class="beta">BETA</div>
     <header
       class="logo flex flex-grow md:flex-grow-0 justify-center md:justify-start lg:block py-3 px-4 lg:pt-10 lg:pb-12"
