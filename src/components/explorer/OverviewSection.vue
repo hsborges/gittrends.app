@@ -8,7 +8,7 @@
       class="md:flex-block w-1/2 md:w-1/4 py-2 md:py-3 px-4"
       :class="{
         hidden: !field.value || field.value == 0,
-        'w-full': field.value.length > 25
+        'w-full': field.value && field.value.length > 25
       }"
     >
       <span class="block text-sm md:text-center md:-ml-2">
