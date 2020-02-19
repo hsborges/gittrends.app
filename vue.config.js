@@ -10,6 +10,11 @@ module.exports = {
         pathRewrite: {
           "^/api/": "/" // remove base path
         }
+      },
+      "^/(?=icon|lettericons)": {
+        target: "https://besticon-demo.herokuapp.com/",
+        ws: true,
+        changeOrigin: true
       }
     }
   },

@@ -13,7 +13,7 @@
             v-for="lang in languages"
             :key="lang.language"
             :value="lang.language"
-            >{{ lang.language }}</option
+            >{{ lang.language || "_None_" }}</option
           >
         </select>
       </div>
@@ -119,13 +119,14 @@
       >
         <div class="flex info">
           <div class="icon flex flex-shrink-0 w-16 items-center justify-center">
-            <i v-if="!repo.homepage" class="fas fa-book"></i>
-            <img
-              v-else
-              :src="
-                `https://www.google.com/s2/favicons?domain=${repo.homepage}`
+            <object
+              :data="
+                `/icon?url=${repo.homepage || 'github.com'}&size=16..32..32`
               "
-            />
+              type="image/png"
+            >
+              <img :src="`/icon?url=github.com&size=16..32..32`" />
+            </object>
           </div>
           <div class="content flex-block flex-grow py-2 pr-3">
             <p class="font-bold text-secondary">{{ repo.full_name }}</p>

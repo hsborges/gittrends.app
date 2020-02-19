@@ -24,6 +24,12 @@ http {
       proxy_pass http://${API_HOST}:${API_PORT};
       proxy_redirect     off;
     }
+    location ~ ^/(icon|lettericons) {
+      proxy_set_header Host ${DOLAR}host;
+      proxy_set_header X-Real-IP ${DOLAR}remote_addr;
+      proxy_pass http://${ICONSERVER_HOST}:${ICONSERVER_PORT};
+      proxy_redirect     off;
+    }
     location / {
       root   /app;
       index  index.html;
