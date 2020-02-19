@@ -247,8 +247,6 @@ export default {
         this.repositories = data.result;
         this.meta = data._meta;
 
-        console.log(this.meta);
-
         const queryParams = _(this.filter)
           .pick(["language", "query"])
           .pickBy((v) => v)
@@ -275,8 +273,6 @@ export default {
         (r) => r._id
       );
       this.meta = _meta;
-
-      console.log(this.meta);
 
       this.$gtag.event("search", { search_term: this.searchQuery() });
     },
