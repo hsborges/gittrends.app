@@ -243,20 +243,22 @@ export default {
     async applyFilter() {
       this.filter.page = 0;
 
-      axios(`/api/search/repos?${this.searchQuery()}`).then(({ data }) => {
-        this.repositories = data.result;
-        this.meta = data._meta;
+      return axios(`/api/search/repos?${this.searchQuery()}`).then(
+        ({ data }) => {
+          this.repositories = data.result;
+          this.meta = data._meta;
 
-        const queryParams = _(this.filter)
-          .pick(["language", "query"])
-          .pickBy((v) => v)
-          .value();
+          const queryParams = _(this.filter)
+            .pick(["language", "query"])
+            .pickBy((v) => v)
+            .value();
 
-        if (!_.isEqual(this.$route.query, queryParams))
-          this.$router.replace({ query: queryParams });
+          if (!_.isEqual(this.$route.query, queryParams))
+            this.$router.replace({ query: queryParams });
 
-        this.$gtag.event("search", { search_term: this.searchQuery() });
-      });
+          this.$gtag.event("search", { search_term: this.searchQuery() });
+        }
+      );
     },
     async loadMore() {
       this.filter.page += 1;
