@@ -161,28 +161,33 @@
       class="paginator text-sm sm:text-lg"
     >
       <span v-if="filter.page > 0" @click="update({ page: 0 })">&#171;</span>
-      <span
-        v-if="filter.page > 0"
-        @click="update({ page: (filter.page -= 1) })"
-      >
-        &#8249;
+      <span v-if="filter.page > 0" @click="update({ page: 0 })">
+        1
       </span>
+      <span v-if="meta && filter.page > 1" class="disabled">...</span>
       <span
-        v-if="filter.page > 0"
+        v-if="repositories && filter.page > 1"
         @click="update({ page: (filter.page -= 1) })"
+        >{{ filter.page }}</span
       >
-        {{ filter.page }}
-      </span>
       <span class="active">{{ filter.page + 1 }}</span>
       <span
-        v-if="repositories && repositories.length == filter.limit"
+        v-if="repositories && filter.page < meta.pages_count - 1"
         @click="update({ page: (filter.page += 1) })"
         >{{ filter.page + 2 }}</span
       >
+      <span v-if="meta && filter.page < meta.pages_count - 2" class="disabled">
+        ...
+      </span>
+      <span
+        v-if="meta && filter.page < meta.pages_count - 2"
+        @click="update({ page: meta.pages_count - 1 })"
+        >{{ meta.pages_count }}</span
+      >
       <span
         v-if="repositories && repositories.length == filter.limit"
-        @click="update({ page: (filter.page += 1) })"
-        >&#8250;</span
+        @click="update({ page: meta.pages_count - 1 })"
+        >&#187;</span
       >
     </div>
     <Details
@@ -214,12 +219,13 @@ export default {
       languages: null,
       repositories: null,
       repository: null,
-      request: null
+      request: null,
+      meta: null
     };
   },
   async created() {
     await axios("/api/search/languages").then(
-      ({ data }) => (this.languages = data)
+      ({ data: { result } }) => (this.languages = result)
     );
   },
   async mounted() {
@@ -256,9 +262,12 @@ export default {
       this.filter = { ...this.filter, page, language, query };
       this.updateUrlQuery();
 
-      this.repositories = (
+      const { result, _meta } = (
         await axios(`/api/search/repos?${qs.encode(this.filter)}`)
       ).data;
+
+      this.repositories = result;
+      this.meta = _meta;
 
       setTimeout(
         () => window.scrollTo({ top: 0, left: 0, behavior: "smooth" }),
@@ -369,7 +378,9 @@ export default {
     span
       @apply: border border-secondary-200 px-4 py-1 cursor-pointer;
       &:hover
-        @apply: bg-primary-500 font-bold text-secondary;
+        @apply: font-bold text-secondary;
+    span.disabled
+        @apply cursor-default;
     span.active
-      @apply: bg-primary font-bold text-white;
+      @apply: bg-primary font-bold text-white cursor-default;
 </style>

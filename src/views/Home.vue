@@ -67,7 +67,7 @@ export default {
     axios
       .get(`/api/search/repos?limit=9&random=${random(10)}`)
       .then((response) => {
-        this.repositories = response.data;
+        this.repositories = response.data.result;
       });
   },
   methods: {
