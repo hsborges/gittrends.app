@@ -6,13 +6,13 @@
         <select
           class="appearance-none pr-2 py-1 leading-tight font-bold cursor-pointer overflow-hidden"
           v-model="filter.language"
-          @change="update"
+          @change="applyFilter"
         >
           <option :value="undefined">All &#9662;</option>
           <option
             v-for="lang in languages"
             :key="lang.language"
-            :value="lang.language"
+            :value="lang.language || 'null'"
             >{{ lang.language || "_None_" }}</option
           >
         </select>
@@ -25,17 +25,23 @@
           class="flex flex-grow overflow-hidden"
           type="text"
           v-model="filter.query"
-          @keypress.enter="update"
+          @keypress.enter="applyFilter"
         />
         <a
           class="flex cursor-pointer text-sm opacity-25 hover:opacity-100 pl-1"
         >
-          <i class="fas fa-search py-1" @click="update"></i>
+          <i class="fas fa-search py-1" @click="applyFilter"></i>
         </a>
         <a
           class="flex cursor-pointer text-sm opacity-25 hover:opacity-100 pl-1 md:pl-2"
         >
-          <i class="fas fa-times py-1" @click="reset() && update()"></i>
+          <i
+            class="fas fa-times py-1"
+            @click="
+              reset();
+              applyFilter();
+            "
+          ></i>
         </a>
       </div>
     </div>
@@ -158,38 +164,19 @@
       </div>
     </div>
     <div
-      v-if="filter && !repository && repositories && repositories.length"
-      class="paginator text-sm sm:text-lg"
+      v-if="!repository && meta && filter.page < meta.pages_count - 1"
+      class="paginator flex justify-center text-sm sm:text-base  w-11/12 lg:w-4/6"
     >
-      <span v-if="filter.page > 0" @click="update({ page: 0 })">&#171;</span>
-      <span v-if="filter.page > 0" @click="update({ page: 0 })">
-        1
-      </span>
-      <span v-if="meta && filter.page > 1" class="disabled">...</span>
-      <span
-        v-if="repositories && filter.page > 1"
-        @click="update({ page: (filter.page -= 1) })"
-        >{{ filter.page }}</span
+      <button
+        class="w-full sm:w-1/2 mt-4 py-2 rounded-lg border-2 border-gray-300 bg-primary text-white font-bold text-center leading-tight"
+        @click="loadMore"
       >
-      <span class="active">{{ filter.page + 1 }}</span>
-      <span
-        v-if="repositories && filter.page < meta.pages_count - 1"
-        @click="update({ page: (filter.page += 1) })"
-        >{{ filter.page + 2 }}</span
-      >
-      <span v-if="meta && filter.page < meta.pages_count - 2" class="disabled">
-        ...
-      </span>
-      <span
-        v-if="meta && filter.page < meta.pages_count - 2"
-        @click="update({ page: meta.pages_count - 1 })"
-        >{{ meta.pages_count }}</span
-      >
-      <span
-        v-if="repositories && repositories.length == filter.limit"
-        @click="update({ page: meta.pages_count - 1 })"
-        >&#187;</span
-      >
+        Load more
+        <i
+          class="fas fa-sync-alt pl-1"
+          :class="{ 'fa-spin': filter.loading }"
+        ></i>
+      </button>
     </div>
     <Details
       v-if="repository"
@@ -235,47 +222,63 @@ export default {
     const { open, query, language } = this.$route.query;
     this.filter = { ...this.filter, language, query: open || query };
 
-    return this.update().then(() => {
+    return this.applyFilter().then(() => {
       if ((query || open) && this.repositories.length === 1)
         this.showDetails(this.repositories[0]);
     });
   },
   methods: {
-    async reset() {
+    searchQuery() {
+      return qs.encode(
+        _(this.filter)
+          .omit(["loading"])
+          .pickBy((v) => !!v)
+          .value()
+      );
+    },
+    reset() {
       this.repositories = this.repository = null;
       this.filter = { limit: 10, page: 0 };
     },
-    async updateUrlQuery() {
-      const queryParams = _(this.filter)
-        .pick(["language", "query"])
-        .pickBy((v) => v)
-        .value();
+    async applyFilter() {
+      this.filter.page = 0;
 
-      if (!_.isEqual(this.$route.query, queryParams))
-        this.$router.replace({ query: queryParams });
+      axios(`/api/search/repos?${this.searchQuery()}`).then(({ data }) => {
+        this.repositories = data.result;
+        this.meta = data._meta;
+
+        console.log(this.meta);
+
+        const queryParams = _(this.filter)
+          .pick(["language", "query"])
+          .pickBy((v) => v)
+          .value();
+
+        if (!_.isEqual(this.$route.query, queryParams))
+          this.$router.replace({ query: queryParams });
+
+        this.$gtag.event("search", { search_term: this.searchQuery() });
+      });
     },
-    async update({
-      page = this.filter.page,
-      language = this.filter.language,
-      query = this.filter.query
-    } = {}) {
-      this.repository = null;
-      this.filter = { ...this.filter, page, language, query };
-      this.updateUrlQuery();
+    async loadMore() {
+      this.filter.page += 1;
+      this.filter.loading = true;
 
       const { result, _meta } = (
-        await axios(`/api/search/repos?${qs.encode(this.filter)}`)
+        await axios(`/api/search/repos?${this.searchQuery()}`).finally(
+          () => (this.filter.loading = false)
+        )
       ).data;
 
-      this.repositories = result;
+      this.repositories = _.uniqBy(
+        this.repositories.concat(result),
+        (r) => r._id
+      );
       this.meta = _meta;
 
-      setTimeout(
-        () => window.scrollTo({ top: 0, left: 0, behavior: "smooth" }),
-        50
-      );
+      console.log(this.meta);
 
-      this.$gtag.event("search", { search_term: qs.encode(this.filter) });
+      this.$gtag.event("search", { search_term: this.searchQuery() });
     },
     async showDetails(repo) {
       this.repository = repo;
@@ -339,7 +342,13 @@ export default {
   },
   watch: {
     "$route.query": function(to) {
-      if (_.isEmpty(to)) this.reset() && this.update();
+      if (
+        _.isEmpty(to) &&
+        (this.filter.query || this.filter.language || this.repository)
+      ) {
+        this.reset();
+        this.applyFilter();
+      }
     }
   }
 };
@@ -373,15 +382,4 @@ export default {
         @apply shadow bg-primary-lighter text-white font-bold py-1 px-4 mt-2 rounded;
         &:hover
           @apply bg-primary;
-
-  .paginator
-    @apply: pt-6;
-    span
-      @apply: border border-secondary-200 px-4 py-1 cursor-pointer;
-      &:hover
-        @apply: font-bold text-secondary;
-    span.disabled
-        @apply cursor-default;
-    span.active
-      @apply: bg-primary font-bold text-white cursor-default;
 </style>
