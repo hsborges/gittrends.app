@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="navbar sticky md:h-screen top-0 flex lg:flex-grow-0 lg:flex-col bg-primary text-white"
+    class="navbar sticky lg:h-screen top-0 flex lg:flex-grow-0 lg:flex-col bg-primary text-white"
   >
     <div class="beta">BETA</div>
     <header
@@ -29,7 +29,7 @@
         class="option flex items-center lg:h-16 px-2 lg:px-0
                text-lg xl:text-xl leading-none border-solid lg:border-b-2 border-white"
         :class="{
-          first: index === 0,
+          'lg:border-t-2': index === 0,
           active: $route.name === option.name.toLowerCase()
         }"
         :to="option.url"
@@ -104,14 +104,7 @@ div.beta
 
 .navbar
   min-width: 15vw;
-  .options
-    .option:hover
-      @apply: font-bold;
-      span
-         @apply: block
-    .option.first
-      @apply: border-t-2;
-    .option.active
+  .option.active
       @apply: font-bold text-primary bg-white;
   footer > .social > a
     @apply: text-white font-bold text-xl;
