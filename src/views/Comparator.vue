@@ -245,6 +245,17 @@ export default {
       data.result.map((l) => l.language).slice(0, 5)
     );
 
+    const names = _.reduce(
+      this.$route.query,
+      (a, v, k) => {
+        if (k.indexOf("repo") === 0) return a.concat(v);
+        return a;
+      },
+      []
+    );
+
+    if (names && names.length)
+      return Promise.mapSeries(names, (name) => this.find(name));
     return this.suggest();
   },
   computed: {
@@ -281,6 +292,14 @@ export default {
           return suggestions.sort((a, b) => a.text.length - b.text.length);
         });
     },
+    async updateUrl() {
+      this.$router.replace({
+        query: this.repositories.reduce(
+          (m, r, i) => ({ ...m, [`repo${i + 1}`]: r.full_name }),
+          {}
+        )
+      });
+    },
     async add(id) {
       if (_.isArray(id)) return Promise.mapSeries(id, (i) => this.add(i));
 
@@ -312,11 +331,13 @@ export default {
       this.repositories.push({ ...repo, stargazers });
       this.$refs.searchBar.clear();
       this.loading = false;
+      this.updateUrl();
       this.$nextTick(() => this.loadSeries({ ...repo, stargazers }));
     },
     remove(id) {
       this.repositories = this.repositories.filter((r) => r._id !== id);
       this.chart.unload({ ids: [`${id}`] });
+      this.updateUrl();
       if (!this.repositories.length) this.suggest();
     },
     showMessage(text) {
