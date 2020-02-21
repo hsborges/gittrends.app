@@ -66,13 +66,21 @@
                 </object>
                 <span class="text-sm sm:text-base leading-none py-2">
                   {{ repo.name }}
-                  <br class="sm:hidden" />
+                  <br />
+                  <a
+                    title="Go to repository details"
+                    class="text-sm cursor-pointer pl-1"
+                    :href="`/explore?open=${repo.full_name}`"
+                    :target="repo._id"
+                  >
+                    <i class="pt-1 fas fa-external-link-alt"></i>
+                  </a>
                   <a
                     title="Remove"
                     class="text-sm cursor-pointer text-red-400 pl-1"
                     @click="remove(repo._id)"
                   >
-                    <i class="fas fa-trash-alt"></i>
+                    <i class="pt-1 fas fa-trash-alt"></i>
                   </a>
                 </span>
               </div>
