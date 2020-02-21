@@ -10,6 +10,7 @@
         hidden: !field.value || field.value == 0,
         'w-full': field.value && field.value.length > 25
       }"
+      :title="field.title"
     >
       <span class="block text-sm md:text-center md:-ml-2">
         <i class="text-xs" :class="field.icon"></i>
@@ -95,12 +96,14 @@ export default {
         {
           text: "Created",
           icon: "fas fa-rocket",
-          value: moment(this.repository.created_at).fromNow()
+          value: moment(this.repository.created_at).fromNow(),
+          title: moment(this.repository.created_at).format("LLL")
         },
         {
           text: "Last push",
           icon: "fas fa-arrow-alt-circle-up",
-          value: moment(this.repository.pushed_at).fromNow()
+          value: moment(this.repository.pushed_at).fromNow(),
+          title: moment(this.repository.pushed_at).format("LLL")
         },
         {
           text: "License",
@@ -115,7 +118,8 @@ export default {
         {
           text: "Last update",
           icon: "far fa-clock",
-          value: moment(this.repository.updated_at).fromNow()
+          value: moment(this.repository.updated_at).fromNow(),
+          title: moment(this.repository.updated_at).format("LLL")
         }
       ]
     };
