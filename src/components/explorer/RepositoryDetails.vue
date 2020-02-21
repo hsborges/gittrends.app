@@ -6,9 +6,17 @@
     <div class="header flex-block py-4 px-2 bg-primary text-center">
       <a
         class="relative float-right -mt-3 text-white cursor-pointer"
+        title="close"
         @click="$emit('dismiss', true)"
       >
         <i class="fas fa-times"></i>
+      </a>
+      <a
+        class="relative float-right -mt-3 text-white cursor-pointer pr-2"
+        title="compare"
+        :href="`/compare?repo=${repository.full_name}`"
+      >
+        <i class="fas fa-exchange-alt"></i>
       </a>
       <p class="text-xl font-bold text-white">
         <i class="fab fa-github px-2"></i>
