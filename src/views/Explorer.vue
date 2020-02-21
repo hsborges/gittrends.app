@@ -234,7 +234,7 @@ export default {
   },
   computed: {
     languages() {
-      if (this.filter.query) return this.meta.languages;
+      if (this.filter.query && this.meta) return this.meta.languages;
       return this.languagesDefault;
     }
   },
