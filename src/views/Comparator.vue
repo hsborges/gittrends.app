@@ -17,14 +17,16 @@
         :placeholder="'Project\' name (e.g., twbs/bootstrap)'"
         @search="find"
       ></Search>
-      <span class="text-center text-red-400" v-if="message">{{ message }}</span>
+      <span class="text-center text-red-300" v-if="message">{{ message }}</span>
       <span
         class="flex text-center text-sm text-secondary-500"
         :class="`pt-${repositories.length ? 2 : 4}`"
         v-if="hasSuggestions"
       >
         <div class="flex flex-grow flex-wrap justify-center">
-          <span class="font-bold pr-1">Suggestions:</span>
+          <span class="font-bold pr-1">
+            {{ suggestions[0].id.length === 1 ? "Suggestions:" : "Examples:" }}
+          </span>
           <span
             v-for="(suggestion, i) in suggestions"
             :key="i"
@@ -342,14 +344,14 @@ export default {
     },
     showMessage(text) {
       this.message = text;
-      setTimeout(() => (this.message = null), 10000);
+      setTimeout(() => (this.message = null), 3000);
     },
     async find(v) {
-      this.suggestions = this.message = null;
-
-      if (!v || v.length < 4)
+      if (!v) return;
+      else if (v.length < 3)
         return this.showMessage("You must provide at least 4 characters");
 
+      this.suggestions = this.message = null;
       const name = v.trim().toLowerCase();
 
       const { result } = await axios(
