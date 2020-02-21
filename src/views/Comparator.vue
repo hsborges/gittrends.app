@@ -93,7 +93,9 @@
               :key="i"
               class="text-center border text-sm sm:text-base"
             >
-              <span v-if="repo">{{ field.value(repo) }}</span>
+              <span v-if="repo" :title="field.title && field.title(repo)">
+                {{ field.value(repo) }}
+              </span>
             </td>
           </tr>
           <tr>
@@ -180,12 +182,14 @@ export default {
         {
           text: "Created",
           icon: "fas fa-rocket",
-          value: (r) => moment(r.created_at).fromNow()
+          value: (r) => moment(r.created_at).fromNow(),
+          title: (r) => moment(r.created_at).format("LLL")
         },
         {
           text: "Last push",
           icon: "fas fa-arrow-alt-circle-up",
-          value: (r) => moment(r.pushed_at).fromNow()
+          value: (r) => moment(r.pushed_at).fromNow(),
+          title: (r) => moment(r.pushed_at).format("LLL")
         },
         {
           text: "License",
@@ -200,11 +204,6 @@ export default {
         }
       ]
     };
-  },
-  async created() {
-    this.languages = await axios("/api/search/languages").then(({ data }) =>
-      data.result.map((l) => l.language)
-    );
   },
   async mounted() {
     this.$nextTick(() => {
@@ -233,7 +232,12 @@ export default {
         transition: { duration: 500 }
       });
     });
-    this.suggest();
+
+    this.languages = await axios("/api/search/languages").then(({ data }) =>
+      data.result.map((l) => l.language).slice(0, 5)
+    );
+
+    return this.suggest();
   },
   computed: {
     hasRepositories() {
@@ -256,7 +260,7 @@ export default {
         .then((response) => {
           const repos = _.shuffle(response.data.result);
           const suggestions = [];
-          for (let i = 0; i < 3; i++) {
+          for (let i = 0; i < Math.ceil(repos.length / 2); i++) {
             const r1 = repos[i];
             const r2 = repos[repos.length - i - 1];
 
