@@ -190,7 +190,7 @@ export default {
   data() {
     return {
       filter: null,
-      languagesDefault: null,
+      languages: null,
       repositories: null,
       repository: null,
       request: null,
@@ -199,7 +199,7 @@ export default {
   },
   async created() {
     await axios("/api/search/languages").then(
-      ({ data: { result } }) => (this.languagesDefault = result)
+      ({ data: { result } }) => (this.languages = result)
     );
   },
   async mounted() {
@@ -217,13 +217,6 @@ export default {
       )
         this.showDetails(this.repositories[0]);
     });
-  },
-  computed: {
-    languages() {
-      if (!this.$route.query.open && this.filter.query && this.meta)
-        return this.meta.languages;
-      return this.languagesDefault;
-    }
   },
   methods: {
     searchQuery() {
