@@ -234,6 +234,8 @@ export default {
     },
     async applyFilter(query) {
       this.filter.page = 0;
+      this.repository = null;
+
       if (query) this.filter.query = query;
 
       return axios(`/api/search/repos?${this.searchQuery()}`).then(
