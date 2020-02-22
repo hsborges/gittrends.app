@@ -3,7 +3,7 @@
     class="flex w-full border border-secondary-200 rounded appearance-none leading-normal z-auto"
   >
     <input
-      class="flex flex-grow overflow-hidden"
+      class="flex flex-grow overflow-hidden focus:outline-none"
       type="text"
       v-model="query"
       :id="id || 'search'"

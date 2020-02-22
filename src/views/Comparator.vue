@@ -124,7 +124,11 @@
               >
                 <div class="flex">
                   <span class="font-bold">Stargazers:</span>
-                  <select v-model="chartType" @change="loadChart">
+                  <select
+                    v-model="chartType"
+                    @change="loadChart"
+                    class="bg-transparent border-transparent"
+                  >
                     <option value="cumulative">Cumulative</option>
                     <option value="gained">Gained</option>
                   </select>
@@ -132,7 +136,11 @@
                 <span class="px-2 sm:px-4">-</span>
                 <div class="flex">
                   <span class="font-bold">Scale:</span>
-                  <select v-model="chartScale" @change="changeScale">
+                  <select
+                    v-model="chartScale"
+                    @change="changeScale"
+                    class="bg-transparent border-transparent"
+                  >
                     <option value="linear">Linear</option>
                     <option value="log">Log</option>
                   </select>
@@ -411,8 +419,4 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
-select {
-  @apply: block border border-gray-200 text-gray-700;
-}
-</style>
+<style lang="stylus" scoped></style>

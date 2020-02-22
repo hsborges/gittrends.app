@@ -2,9 +2,9 @@
   <div class="explorer flex flex-col flex-grow items-center">
     <div v-if="filter" class="filter w-11/12 lg:w-4/6 py-2">
       <div class="inline-flex w-1/2 text-secondary text-sm md:text-base">
-        <span class="py-1 leading-tight">Language:</span>
+        <span class="py-1 pr-1 leading-tight">Language:</span>
         <select
-          class="appearance-none pr-2 py-1 leading-tight font-bold cursor-pointer overflow-hidden"
+          class="appearance-none py-1 leading-tight font-bold cursor-pointer overflow-hidden bg-transparent border-0"
           v-model="filter.language"
           @change="applyFilter()"
         >
@@ -220,7 +220,8 @@ export default {
   },
   computed: {
     languages() {
-      if (this.filter.query && this.meta) return this.meta.languages;
+      if (!this.$route.query.open && this.filter.query && this.meta)
+        return this.meta.languages;
       return this.languagesDefault;
     }
   },
