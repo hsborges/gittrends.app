@@ -209,6 +209,7 @@ export default {
     this.filter = { ...this.filter, language, query: open || query };
 
     return this.applyFilter().then(() => {
+      window.addEventListener("scroll", this.handleScroll);
       if (
         (query || open) &&
         (this.repositories.length === 1 ||
@@ -330,7 +331,16 @@ export default {
         });
 
       this.request.sending = false;
+    },
+    handleScroll() {
+      let distanceFromBottom =
+        document.documentElement.offsetHeight -
+        (document.documentElement.scrollTop + window.innerHeight);
+      if (distanceFromBottom < 50) this.loadMore();
     }
+  },
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
   watch: {
     "$route.query": function(to) {
