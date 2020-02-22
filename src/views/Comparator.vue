@@ -320,7 +320,7 @@ export default {
       if (this.repositories.find((r) => r._id === id))
         return this.showMessage("Repository already added!");
 
-      if (this.repositories.length === 4)
+      if (this.repositories.length === 6)
         return this.showMessage(
           "Remove one repository before adding new ones."
         );
