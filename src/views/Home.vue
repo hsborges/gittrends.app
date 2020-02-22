@@ -13,19 +13,12 @@
       <span class="text-lg lg:text-xl py-4 lg:py-6"
         >Find your favorite project ...</span
       >
-      <div
-        class="flex items-center py-2 px-4 w-5/6 lg:w-1/2
-               border border-gray-500 rounded appearance-none leading-normal"
-      >
-        <input
-          class="flex flex-grow w-full"
-          placeholder="owner/name"
-          v-model="query"
-          v-on:keyup.enter="onEnter"
-        />
-        <a class="cursor-pointer opacity-50 hover:opacity-100" @click="onEnter">
-          <i class="fas fa-search"></i>
-        </a>
+      <div class="flex items-center w-5/6 lg:w-1/2">
+        <Search
+          class="py-2 px-4 border border-gray-500 rounded-full appearance-none leading-normal"
+          @search="search"
+        >
+        </Search>
       </div>
 
       <span class="text-lg lg:text-xl py-4 lg:py-6">
@@ -52,17 +45,17 @@ import { random } from "lodash";
 import axios from "axios";
 
 import Love from "@/components/Love.vue";
+import Search from "@/components/SearchBox.vue";
 import Card from "@/components/home/RepositoryCard.vue";
 
 export default {
   name: "home",
   data() {
     return {
-      query: null,
       repositories: null
     };
   },
-  components: { Love, Card },
+  components: { Love, Card, Search },
   mounted: function() {
     axios
       .get(`/api/search/repos?limit=9&random=${random(10)}`)
@@ -71,8 +64,8 @@ export default {
       });
   },
   methods: {
-    onEnter: function() {
-      this.$router.push(`/explore?query=${this.query}`);
+    search: function(value) {
+      this.$router.push(`/explore?query=${value || ""}`);
     }
   }
 };

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-full text-base border border-secondary-200 rounded appearance-none leading-normal"
+    class="flex w-full border border-secondary-200 rounded appearance-none leading-normal z-auto"
   >
     <input
       class="flex flex-grow overflow-hidden"
@@ -10,11 +10,13 @@
       :placeholder="placeholder || 'e.g., twbs/bootstrap'"
       @keypress.enter="$emit('search', query)"
     />
-    <a class="flex cursor-pointer text-sm opacity-25 hover:opacity-100 px-1">
+    <a
+      class="flex cursor-pointer text-sm px-1 text-secondary-400 hover:text-secondary"
+    >
       <i class="fas fa-search py-1" @click="$emit('search', query)"></i>
     </a>
     <a
-      class="flex cursor-pointer text-sm opacity-25 hover:opacity-100 pl-1 md:pl-2"
+      class="flex cursor-pointer text-sm pr-1 sm:pr-2 text-secondary-400 hover:text-secondary"
       v-if="showClear"
     >
       <i class="fas fa-times py-1" @click="clear"></i>
@@ -33,6 +35,7 @@ export default {
   methods: {
     clear() {
       this.query = null;
+      this.$emit("clear");
     }
   }
 };

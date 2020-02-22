@@ -20,8 +20,41 @@
         </span>
       </router-link>
     </header>
+    <section class="absolute right-0 py-4 pr-2 text-xl">
+      <a
+        class="sm:hidden bg-primary-300 px-3 py-2 rounded"
+        @click="showMenu = true"
+      >
+        <i class="fas fa-bars"></i>
+      </a>
+      <div
+        class="absolute top-0 right-0 w-screen h-screen bg-primary"
+        :class="showMenu ? 'visible z-50' : 'invisible'"
+        @click.prevent="void 0"
+      >
+        <div class="flex flex-grow flex-col items-center justify-center">
+          <i
+            class="fas fa-times text-4xl cursor-pointer py-12"
+            @click="showMenu = false"
+          ></i>
+          <router-link
+            v-for="(option, index) in options"
+            :key="index"
+            class="flex justify-center w-2/4 py-3 text-xl"
+            :class="{
+              'text-primary font-bold bg-white rounded-full':
+                $route.name === option.name.toLowerCase()
+            }"
+            :to="option.url"
+            @click="showMenu = false"
+          >
+            {{ option.name.toUpperCase() }}
+          </router-link>
+        </div>
+      </div>
+    </section>
     <section
-      class="options hidden md:flex lg:flex-col justify-end lg:justify-start lg:content-center flex-grow"
+      class="options hidden sm:flex lg:flex-col justify-end lg:justify-start lg:content-center flex-grow"
     >
       <router-link
         v-for="(option, index) in options"
@@ -61,6 +94,7 @@
 export default {
   data() {
     return {
+      showMenu: false,
       urls: {
         github: "https://www.github.com/hsborges/gittrends.app"
       },
@@ -91,6 +125,11 @@ export default {
         }
       ]
     };
+  },
+  watch: {
+    "$route.path": function() {
+      this.showMenu = false;
+    }
   }
 };
 </script>

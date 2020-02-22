@@ -6,7 +6,7 @@
         <select
           class="appearance-none pr-2 py-1 leading-tight font-bold cursor-pointer overflow-hidden"
           v-model="filter.language"
-          @change="applyFilter"
+          @change="applyFilter()"
         >
           <option :value="undefined">All &#9662;</option>
           <option
@@ -18,31 +18,16 @@
         </select>
       </div>
 
-      <div
-        class="search flex w-1/2 md:w-1/3 px-2 float-right text-sm md:text-base"
-      >
-        <input
-          class="flex flex-grow overflow-hidden"
-          type="text"
-          v-model="filter.query"
-          @keypress.enter="applyFilter"
-        />
-        <a
-          class="flex cursor-pointer text-sm opacity-25 hover:opacity-100 pl-1"
-        >
-          <i class="fas fa-search py-1" @click="applyFilter"></i>
-        </a>
-        <a
-          class="flex cursor-pointer text-sm opacity-25 hover:opacity-100 pl-1 md:pl-2"
-        >
-          <i
-            class="fas fa-times py-1"
-            @click="
-              reset();
-              applyFilter();
-            "
-          ></i>
-        </a>
+      <div class="search flex w-1/2 md:w-1/3 float-right ">
+        <Search
+          class="pl-1 sm:pl-2 text-sm md:text-base"
+          :showClear="true"
+          @search="applyFilter"
+          @clear="
+            reset();
+            applyFilter();
+          "
+        ></Search>
       </div>
     </div>
     <div
@@ -196,11 +181,12 @@ import moment from "moment";
 import qs from "querystring";
 
 import Love from "@/components/Love.vue";
+import Search from "@/components/SearchBox.vue";
 import Details from "@/components/explorer/RepositoryDetails.vue";
 
 export default {
   name: "explorer",
-  components: { Love, Details },
+  components: { Love, Details, Search },
   data() {
     return {
       filter: null,
@@ -251,8 +237,9 @@ export default {
       this.repositories = this.repository = null;
       this.filter = { limit: 10, page: 0 };
     },
-    async applyFilter() {
+    async applyFilter(query) {
       this.filter.page = 0;
+      if (query) this.filter.query = query;
 
       return axios(`/api/search/repos?${this.searchQuery()}`).then(
         ({ data }) => {
@@ -295,6 +282,8 @@ export default {
         const query = { open: repo.full_name };
         this.$router.replace({ query });
         this.$gtag.pageview({ page_path: `/explore?${query}` });
+      } else {
+        this.$router.replace({ query: _.omit(this.$route.query, "open") });
       }
     },
     formatNumber: (v, simple) => {
@@ -366,9 +355,6 @@ export default {
 <style lang="stylus" scoped>
 .explorer
   margin: 5vh auto 0px auto;
-  .filter
-    .search
-      @apply: border border-secondary-200 rounded appearance-none leading-normal;
 
   .items
     @apply: border border-secondary-200 rounded;

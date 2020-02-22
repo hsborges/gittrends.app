@@ -5,7 +5,8 @@
       :class="{ 'flex-grow justify-center': !hasRepositories }"
     >
       <label
-        class="text-center text-2xl sm:text-3xl text-primary font-bold leading-normal pb-4"
+        class="text-center text-2xl sm:text-3xl text-primary font-bold leading-normal pb-2"
+        :class="{ 'pb-8': !hasRepositories }"
         for="search-box"
       >
         Find a repository to compare
@@ -19,11 +20,14 @@
       ></Search>
       <span class="text-center text-red-300" v-if="message">{{ message }}</span>
       <span
-        class="flex text-center text-sm text-secondary-500"
+        class="flex text-center text-sm sm:text-base text-secondary-500 sm:-mx-12"
         :class="`pt-${repositories.length ? 2 : 4}`"
         v-if="hasSuggestions"
       >
-        <div class="flex flex-grow flex-wrap justify-center">
+        <div
+          class="flex flex-grow flex-wrap justify-center"
+          :class="{ 'flex-col pt-8': suggestions[0].id.length > 1 }"
+        >
           <span class="font-bold pr-1">
             {{ suggestions[0].id.length === 1 ? "Suggestions:" : "Examples:" }}
           </span>
