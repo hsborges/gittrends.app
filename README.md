@@ -14,10 +14,7 @@
   <p align="center">
     Monitoring popular open source projects
     <br />
-    <a href="https://github.com/hsborges/gittrends.app"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/hsborges/gittrends.app">View Demo</a>
+    <a href="https://gittrends.app">Website</a>
     ·
     <a href="https://github.com/hsborges/gittrends.app/issues">Report Bug</a>
     ·
@@ -44,8 +41,6 @@ source projects hosted on GitHub.
 ### Built With
 
 - [Node.js](https://nodejs.org/)
-- [Express.js](https://expressjs.com/)
-- [MongoDB](https://www.mongodb.com/)
 - [Vue.js](https://vuejs.org/)
 
 <!-- ROADMAP -->
