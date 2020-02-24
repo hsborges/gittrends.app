@@ -101,7 +101,7 @@ Project Link:
 [issues-url]: https://github.com/hsborges/gittrends.app/issues
 [license-shield]:
   https://img.shields.io/github/license/hsborges/gittrends.app.svg?style=flat-square
-[license-url]: https://github.com/hsborges/gittrends.app/blob/master/LICENSE.md
+[license-url]: https://github.com/hsborges/gittrends.app/blob/master/LICENSE
 [linkedin-shield]:
   https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
