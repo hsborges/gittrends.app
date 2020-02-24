@@ -23,25 +23,28 @@
     >
       <div class="flex flex-col flex-grow items-center">
         <span class="text-2xl md:text-4xl max-w-2md pt-8 pb-6 text-center">
-          Could you donate an access token?
+          Donate and GitHub access token \o/
         </span>
-        <span class="text-lg md:text-xl max-w-md opacity-75 text-center">
+        <span class="text-lg md:text-xl max-w-md text-center">
           We make thousands of GitHub API requests to keep our database updated.
-          By donating an access token we can add more projects to our dataset
-          and speedup the process.
+          With more tokens we can add expand our dataset and speedup the data
+          processing.
         </span>
         <a
-          class="btn text-xl my-8 hvr-grow"
-          v-bind:href="authorization_url"
+          class="text-xl my-8 rounded text-white font-bold bg-primary py-2 px-8 hover:bg-primary-dark"
+          :href="authorization_url"
           target="_blank"
         >
           <i class="fab fa-github"></i> Authorize
         </a>
-        <span class="text-sm opacity-75 text-center">
+        <span class="text-sm text-center">
           * you can revoke this authorization later on the GitHub website
         </span>
       </div>
-      <img class="flex w-2/3" src="@/assets/images/github-robot.png" />
+      <img
+        class="flex w-2/3 flex-shrink max-w-sm"
+        src="@/assets/images/github-robot.png"
+      />
     </article>
   </div>
 </template>
@@ -69,12 +72,4 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
-header
-  background-color: background-color
-article > img
-  @apply flex-shrink opacity-50 max-w-sm
-.btn
-  background-color: background-color
-  @apply rounded text-white font-bold py-2 px-8
-</style>
+<style lang="stylus" scoped></style>

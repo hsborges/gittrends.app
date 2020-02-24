@@ -9,8 +9,8 @@
           popular open source projects hosted on GitHub.
         </p>
         <p>
-          The information provided here is based on academic research on mining
-          software repositories and you can find more information in the
+          The information provided here is based on mining software research and
+          you can get detailed information in the
           <a href="#references">references</a> bellow.
         </p>
       </article>
@@ -20,30 +20,30 @@
           To keep our database updated we have a web service running on
           background making millions of requests per hour to GitHub service API.
           The data obtained from these requests are stored in a non-relational
-          database, while is also processed, analyzed, and published in this
+          database, while is also processed, analyzed, and pushed to this
           website.
         </p>
         <p>
           As GitHub limits the number of requests to their servers, we need as
-          many access tokens as possible GitHub access tokens to keep our
-          services running and our website aways update. Thus, if you liked
-          GitTrends please consider donating an access token by
-          <router-link :to="{ name: 'authorize' }"> cliking here</router-link>.
+          many as possible GitHub access tokens to keep our services running and
+          our website aways updated. Thus, if you liked this project, please
+          consider donating an access token by
+          <router-link :to="authorizeRoute"> cliking here</router-link>.
         </p>
       </article>
       <article>
-        <h1>Why popular repositories only?</h1>
+        <h1>Why is my project not listed in this tool?</h1>
         <p>
           Although GitHub hosts millions of repositories, GitTrends only monitor
           popular repositories (i.e., those ones with a large number of stars).
-          However, most of them are toy projects or are no longer maintained.
-          Thus, we focus our resources on processing the most relevant ones. If
-          your repository is not here, you can send an email to us requesting
-          its inclusion and why we should add it.
+          If your repository is not indexed, you can
+          <router-link :to="requestRoute">click here</router-link>
+          or send an email to us requesting its inclusion (please, tell us why
+          it would be useful for you).
         </p>
       </article>
       <article>
-        <h1>Who maintain this site?</h1>
+        <h1>Who is maintaining this tool?</h1>
         <div class="me flex flex-col md:flex-row py-8 min-h-32 md:h-56">
           <div class="picture flex flex-grow-0 justify-center">
             <img src="@/assets/images/hudson.jpg" class="h-32 md:h-full" />
@@ -124,6 +124,14 @@ export default {
         }
       ]
     };
+  },
+  computed: {
+    requestRoute() {
+      return { name: "explore", query: { query: "owner/repository-name" } };
+    },
+    authorizeRoute() {
+      return { name: "authorize" };
+    }
   }
 };
 </script>

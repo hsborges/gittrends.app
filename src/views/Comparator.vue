@@ -21,15 +21,15 @@
       <span class="text-center text-red-300" v-if="message">{{ message }}</span>
       <span
         class="flex text-center text-sm sm:text-base text-secondary-500 sm:-mx-12"
-        :class="`pt-${repositories.length ? 2 : 4}`"
+        :class="`pt-${hasRepositories ? 2 : 4}`"
         v-if="hasSuggestions"
       >
         <div
           class="flex flex-grow flex-wrap justify-center"
-          :class="{ 'flex-col pt-8': suggestions[0].id.length > 1 }"
+          :class="{ 'flex-col pt-8': hasExamples }"
         >
           <span class="font-bold pr-1">
-            {{ suggestions[0].id.length === 1 ? "Suggestions:" : "Examples:" }}
+            {{ hasExamples ? "Examples:" : "Suggestions:" }}
           </span>
           <span
             v-for="(suggestion, i) in suggestions"
@@ -92,7 +92,7 @@
               </div>
             </th>
             <th v-if="loading" :class="`w-1/${repositories.length}`">
-              <i class="fas fa-spinner"></i>
+              <i class="fas fa-spinner fa-spin"></i>
             </th>
           </tr>
         </thead>
@@ -117,35 +117,14 @@
               <i class="fas fa-chart-line"></i>
               <span class="hidden sm:inline pl-2">Popularity</span>
             </td>
-            <td class="border-t border py-8" :colspan="repositories.length">
-              <div id="timeseries" class="flex w-full h-40 md:h-64"></div>
-              <div
-                class="flex justify-center items-center text-xs sm:text-sm pt-4"
-              >
-                <div class="flex">
-                  <span class="font-bold">Stargazers:</span>
-                  <select
-                    v-model="chartType"
-                    @change="loadChart"
-                    class="bg-transparent border-transparent"
-                  >
-                    <option value="cumulative">Cumulative</option>
-                    <option value="gained">Gained</option>
-                  </select>
-                </div>
-                <span class="px-2 sm:px-4">-</span>
-                <div class="flex">
-                  <span class="font-bold">Scale:</span>
-                  <select
-                    v-model="chartScale"
-                    @change="changeScale"
-                    class="bg-transparent border-transparent"
-                  >
-                    <option value="linear">Linear</option>
-                    <option value="log">Log</option>
-                  </select>
-                </div>
-              </div>
+            <td
+              class="border-t border py-8 h-24"
+              :colspan="repositories.length"
+            >
+              <Timeseries
+                ref="stargazersChart"
+                @notFound="showMessage('Stargazers timeseries missing :(')"
+              ></Timeseries>
             </td>
           </tr>
         </tbody>
@@ -157,25 +136,22 @@
 
 <script>
 import Promise from "bluebird";
-import _ from "lodash";
 import numeral from "numeral";
 import moment from "moment";
 import axios from "axios";
-import c3 from "c3";
+import _ from "lodash";
 import qs from "querystring";
 
 import Love from "@/components/Love.vue";
 import Search from "@/components/SearchBox.vue";
+import Timeseries from "@/components/StargazersTimeseries.vue";
 
 export default {
-  components: { Love, Search },
+  components: { Love, Search, Timeseries },
   data() {
     return {
       languages: null,
       repositories: [],
-      chart: null,
-      chartType: "cumulative",
-      chartScale: "linear",
       query: null,
       message: null,
       suggestions: [],
@@ -228,33 +204,6 @@ export default {
     };
   },
   async mounted() {
-    this.$nextTick(() => {
-      this.chart = c3.generate({
-        bindto: "#timeseries",
-        padding: { right: 25 },
-        data: { columns: [] },
-        axis: {
-          x: {
-            type: "timeseries",
-            tick: { format: "%Y-%m-%d", count: 5 },
-            label: { text: "Date" }
-          },
-          y: {
-            min: 0,
-            padding: 0,
-            tick: { format: (v) => numeral(Math.round(v)).format("0,0") },
-            label: { text: "Stargazers" }
-          }
-        },
-        point: { show: false },
-        legend: {
-          position: screen.width > 400 ? "inset" : "bottom",
-          inset: { anchor: "top-left", x: 20 }
-        },
-        transition: { duration: 500 }
-      });
-    });
-
     this.languages = await axios("/api/search/languages").then(({ data }) =>
       data.result.map((l) => l.language).slice(0, 5)
     );
@@ -268,9 +217,11 @@ export default {
       []
     );
 
-    if (names && names.length)
-      return Promise.mapSeries(names, (name) => this.find(name));
-    return this.suggest();
+    this.$nextTick(() => {
+      if (names && names.length)
+        return Promise.mapSeries(names, (name) => this.find(name));
+      else return this.suggest();
+    });
   },
   computed: {
     hasRepositories() {
@@ -278,6 +229,9 @@ export default {
     },
     hasSuggestions() {
       return this.suggestions && this.suggestions.length > 0;
+    },
+    hasExamples() {
+      return this.suggestions && this.suggestions[0].id.length > 1;
     }
   },
   methods: {
@@ -307,12 +261,11 @@ export default {
         });
     },
     async updateUrl() {
-      this.$router.replace({
-        query: this.repositories.reduce(
-          (m, r, i) => ({ ...m, [`repo${i + 1}`]: r.full_name }),
-          {}
-        )
-      });
+      const query = this.repositories.reduce(
+        (m, r, i) => ({ ...m, [`repo${i + 1}`]: r.full_name }),
+        {}
+      );
+      if (!_.isEqual(query, this.$route.query)) this.$router.replace({ query });
     },
     async add(id) {
       if (_.isArray(id)) return Promise.mapSeries(id, (i) => this.add(i));
@@ -333,24 +286,15 @@ export default {
         name: _.startCase(data.name)
       }));
 
-      const stargazers = await axios(`/api/repos/${id}/stargazers`)
-        .then(({ data }) =>
-          data.stargazers.map(([d, c]) => [moment.parseZone(d).toDate(), c])
-        )
-        .catch((err) => {
-          if (err.response.status === 404) return null;
-          throw err;
-        });
-
-      this.repositories.push({ ...repo, stargazers });
-      this.$refs.searchBar.clear();
       this.loading = false;
+      this.repositories.push(repo);
+      this.$refs.searchBar.clear();
+      this.$refs.stargazersChart.addRepository(repo);
       this.updateUrl();
-      this.$nextTick(() => this.loadSeries({ ...repo, stargazers }));
     },
     remove(id) {
       this.repositories = this.repositories.filter((r) => r._id !== id);
-      this.chart.unload({ ids: [`${id}`] });
+      this.$refs.stargazersChart.removeRepository(id);
       this.updateUrl();
       if (!this.repositories.length) this.suggest();
     },
@@ -380,40 +324,6 @@ export default {
           .sort((a, b) => a.full_name.length - b.full_name.length)
           .map((r) => ({ text: r.full_name, id: [r._id] }));
       }
-    },
-    loadSeries(repo) {
-      if (!repo.stargazers) return;
-
-      this.chart.load({
-        json: repo.stargazers
-          .reduce(
-            (m, s) =>
-              m.concat({
-                date: s[0],
-                [repo._id]:
-                  s[1] +
-                  (m.length > 0 && this.chartType === "cumulative"
-                    ? m[m.length - 1][repo._id]
-                    : 0)
-              }),
-            []
-          )
-          .slice(0, -1),
-        keys: { x: "date", value: [`${repo._id}`] },
-        names: { [repo._id]: repo.name }
-      });
-    },
-    loadChart() {
-      this.chart.unload({
-        done: () =>
-          this.repositories.forEach((repo) => {
-            if (!repo.stargazers) return;
-            this.loadSeries(repo);
-          })
-      });
-    },
-    changeScale() {
-      this.chart.axis.types({ y: this.chartScale });
     }
   }
 };

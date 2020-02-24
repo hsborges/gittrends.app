@@ -21,6 +21,7 @@
       <div class="search flex w-1/2 md:w-1/3 float-right ">
         <Search
           class="pl-1 sm:pl-2 text-sm md:text-base"
+          ref="searchBar"
           :showClear="true"
           @search="applyFilter"
           @clear="
@@ -209,7 +210,9 @@ export default {
     this.filter = { ...this.filter, language, query: open || query };
 
     return this.applyFilter().then(() => {
+      this.$refs.searchBar.query = this.filter.query;
       window.addEventListener("scroll", this.handleScroll);
+
       if (
         (query || open) &&
         (this.repositories.length === 1 ||
@@ -276,7 +279,7 @@ export default {
     async showDetails(repo) {
       this.repository = repo;
       if (repo) {
-        const query = { open: repo.full_name };
+        const query = { ...this.$route.query, open: repo.full_name };
         this.$router.replace({ query });
         this.$gtag.pageview({ page_path: `/explore?${query}` });
       } else {

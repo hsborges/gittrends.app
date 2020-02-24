@@ -4,16 +4,20 @@
       v-if="showAlert"
       class="flex justify-center w-full h-6 bg-secondary-dark z-50"
     >
-      <a class="text-white text-center font-bold" href="/authorize">
+      <router-link
+        class="text-white text-center font-bold hover:cursor-pointer"
+        to="/authorize"
+      >
         <i class="fas fa-bullhorn px-1"></i>
         <span class="hidden md:inline leading-normal">
-          Hey, we need your support to expand our dataset. Click here to donate
+          Hey, we need your support to expand our database. Click here to donate
           a GitHub access token
         </span>
         <span class="md:hidden text-sm leading-normal">
-          Liked it? Donate a token :)
+          Enjoying? Donate a access token
         </span>
-      </a>
+        \o/
+      </router-link>
       <i
         class="fas fa-times text-white absolute right-0 leading-normal px-2 cursor-pointer"
         @click="closeAlert"

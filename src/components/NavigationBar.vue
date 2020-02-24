@@ -128,6 +128,7 @@ export default {
   },
   watch: {
     "$route.path": function() {
+      window.scrollTo(0, 0);
       this.showMenu = false;
     }
   }

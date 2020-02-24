@@ -26,27 +26,44 @@
       </span>
       <div
         v-if="repositories"
-        class="repositories-cloud flex flex-wrap justify-center w-full md:w-5/6 lg:w-4/6"
+        class="flex flex-wrap justify-center w-full sm:w-5/6 md:w-4/6"
       >
-        <Card
-          v-for="(item, index) in repositories"
-          :repository="item"
-          :key="index"
-          class="mx-1 my-2 lg:mx-3 lg:my-3"
-        ></Card>
+        <router-link
+          v-for="repo in repositories"
+          :key="repo._id"
+          class="flex border border-primary rounded m-1 sm:m-2"
+          :to="`/explore?open=${repo.full_name}`"
+        >
+          <div class="flex flex-grow items-center text-sm px-2">
+            <span class="hidden lg:block leading-none">
+              {{ repo.full_name }}
+            </span>
+            <span class="lg:hidden leading-none">
+              {{ repo.full_name.match(/.+\/(.+)/)[1] }}
+            </span>
+          </div>
+          <div
+            class="flex flex-col bg-primary p-1 lg:p-2
+             text-white font-bold text-xs sm:text-sm"
+          >
+            <span class="leading-normal sm:leading-none">
+              <i class="fas fa-star"></i>
+              {{ format(repo.stargazers_count) }}
+            </span>
+          </div>
+        </router-link>
       </div>
     </div>
-    <Love class="mt-24"></Love>
+    <Love class="mt-12"></Love>
   </div>
 </template>
 
 <script>
-import { random } from "lodash";
 import axios from "axios";
+import numeral from "numeral";
 
 import Love from "@/components/Love.vue";
 import Search from "@/components/SearchBox.vue";
-import Card from "@/components/home/RepositoryCard.vue";
 
 export default {
   name: "home",
@@ -55,17 +72,22 @@ export default {
       repositories: null
     };
   },
-  components: { Love, Card, Search },
+  components: { Love, Search },
   mounted: function() {
+    const cardsCount = window.innerWidth > 400 ? 12 : 9;
     axios
-      .get(`/api/search/repos?limit=9&random=${random(10)}`)
-      .then((response) => {
-        this.repositories = response.data.result;
-      });
+      .get(`/api/search/repos?limit=${cardsCount}&random=${this.random(1, 5)}`)
+      .then((response) => (this.repositories = response.data.result));
   },
   methods: {
     search: function(value) {
       this.$router.push(`/explore?query=${value || ""}`);
+    },
+    format: (v) => (v < 1000 ? v : numeral(v).format("0.0a")),
+    random(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
   }
 };
