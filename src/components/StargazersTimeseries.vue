@@ -36,6 +36,11 @@ export default {
       scale: "linear"
     };
   },
+  async created() {
+    Chart.Legend.prototype.afterFit = function() {
+      this.height = this.height + 15;
+    };
+  },
   async mounted() {
     this.chart = new Chart("chart", {
       type: "line",
@@ -44,7 +49,8 @@ export default {
       },
       options: {
         legend: {
-          display: !this.hideLegend
+          display: !this.hideLegend,
+          labels: { boxWidth: 20, fontSize: this.fontSize }
         },
         scales: {
           xAxes: [
@@ -65,9 +71,16 @@ export default {
             }
           ]
         },
-        elements: { point: { radius: 0, hitRadius: 1 } },
-        tooltips: { mode: "x", intersect: false },
-        plugins: { colorschemes: { scheme: SetTwo8 } }
+        elements: { point: { radius: 0, hitRadius: 0.5 } },
+        tooltips: {
+          mode: "x",
+          intersect: false,
+          position: "nearest",
+          itemSort: (a, b) => b.value - a.value
+        },
+        plugins: {
+          colorschemes: { scheme: SetTwo8 }
+        }
       }
     });
 
@@ -110,7 +123,7 @@ export default {
       while (this.chart.data.datasets.length) this.chart.data.datasets.pop();
       this.repositories.forEach((repo) =>
         this.chart.data.datasets.push({
-          label: repo.full_name,
+          label: repo.name,
           fill: false,
           data: this.transform(repo.stargazers)
         })
@@ -135,7 +148,10 @@ export default {
   },
   computed: {
     height() {
-      return window.innerWidth < 400 ? "225px" : "";
+      return window.innerWidth < 400 ? "250px" : "";
+    },
+    fontSize() {
+      return window.innerWidth < 400 ? 10 : 12;
     }
   },
   watch: {
