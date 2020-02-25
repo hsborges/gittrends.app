@@ -288,6 +288,11 @@ export default {
         name: _.startCase(data.name)
       }));
 
+      this.$gtag.event("select_content", {
+        content_type: "comparator",
+        content_id: repo.full_name
+      });
+
       this.loading = false;
       this.repositories.push(repo);
       this.$refs.searchBar.clear();
@@ -305,6 +310,8 @@ export default {
       setTimeout(() => (this.message = null), 3000);
     },
     async find(v) {
+      this.$gtag.event("search", { search_term: v, path: this.$route.path });
+
       if (!v) return;
       else if (v.length < 3)
         return this.showMessage("You must provide at least 4 characters");

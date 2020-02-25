@@ -18,7 +18,7 @@
         </select>
       </div>
 
-      <div class="search flex w-1/2 md:w-1/3 float-right ">
+      <div class="search flex w-1/2 md:w-1/3 float-right">
         <Search
           class="pl-1 sm:pl-2 text-sm md:text-base"
           ref="searchBar"
@@ -151,7 +151,7 @@
     </div>
     <div
       v-if="!repository && meta && filter.page < meta.pages_count - 1"
-      class="paginator flex justify-center text-sm sm:text-base  w-11/12 lg:w-4/6"
+      class="paginator flex justify-center text-sm sm:text-base w-11/12 lg:w-4/6"
     >
       <button
         class="w-full sm:w-1/2 mt-4 py-2 rounded-lg border-2 border-gray-300 bg-primary text-white font-bold text-center leading-tight"
@@ -256,7 +256,10 @@ export default {
           if (!_.isEqual(this.$route.query, queryParams))
             this.$router.replace({ query: queryParams });
 
-          this.$gtag.event("search", { search_term: this.searchQuery() });
+          this.$gtag.event("search", {
+            search_term: this.searchQuery(),
+            path: this.$route.path
+          });
         }
       );
     },
@@ -276,7 +279,10 @@ export default {
       );
       this.meta = _meta;
 
-      this.$gtag.event("search", { search_term: this.searchQuery() });
+      this.$gtag.event("search", {
+        search_term: this.searchQuery(),
+        path: this.$route.path
+      });
     },
     async showDetails(repo) {
       this.repository = repo;
@@ -284,6 +290,10 @@ export default {
         const query = { ...this.$route.query, open: repo.full_name };
         this.$router.replace({ query });
         this.$gtag.pageview({ page_path: `/explore?${query}` });
+        this.$gtag.event("select_content", {
+          content_type: "explorer",
+          content_id: repo.full_name
+        });
       } else {
         this.$router.replace({ query: _.omit(this.$route.query, "open") });
       }
@@ -364,28 +374,49 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.explorer
+.explorer {
   margin: 5vh auto 0px auto;
 
-  .items
+  .items {
     @apply: border border-secondary-200 rounded;
-    .item
+
+    .item {
       @apply: flex w-full border-b border-secondary-200;
-      &:hover
+
+      &:hover {
         @apply: cursor-pointer bg-primary-100;
-      .counters span
-        @apply pr-2;
-    a
-      @apply text-primary underline cursor-pointer font-bold;
-    .form
-      input
-        @apply bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-1 px-4 text-gray-700 leading-tight;
-        &:focus
-          @apply border-primary bg-white;
-      label
-        @apply block text-gray-500 font-bold mb-0 pr-4;
-      button
-        @apply shadow bg-primary-lighter text-white font-bold py-1 px-4 mt-2 rounded;
-        &:hover
-          @apply bg-primary;
+      }
+
+      .counters span {
+        @apply: pr-2;
+      }
+    }
+
+    a {
+      @apply: text-primary underline cursor-pointer font-bold;
+    }
+
+    .form {
+      input {
+        @apply: bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-1 px-4 text-gray-700 leading-tight;
+
+        &:focus {
+          @apply: border-primary bg-white;
+        }
+      }
+
+      label {
+        @apply: block text-gray-500 font-bold mb-0 pr-4;
+      }
+
+      button {
+        @apply: shadow bg-primary-lighter text-white font-bold py-1 px-4 mt-2 rounded;
+
+        &:hover {
+          @apply: bg-primary;
+        }
+      }
+    }
+  }
+}
 </style>
