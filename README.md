@@ -14,28 +14,13 @@
   <p align="center">
     Monitoring popular open source projects
     <br />
-    <a href="https://github.com/hsborges/gittrends.app"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/hsborges/gittrends.app">View Demo</a>
+    <a href="https://gittrends.app">Website</a>
     ·
     <a href="https://github.com/hsborges/gittrends.app/issues">Report Bug</a>
     ·
     <a href="https://github.com/hsborges/gittrends.app/issues">Request Feature</a>
   </p>
 </p>
-
-<!-- TABLE OF CONTENTS -->
-
-## Table of Contents
-
-- [About the Project](#about-the-project)
-  - [Built With](#built-with)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgements](#acknowledgements)
 
 <!-- ABOUT THE PROJECT -->
 
@@ -56,8 +41,6 @@ source projects hosted on GitHub.
 ### Built With
 
 - [Node.js](https://nodejs.org/)
-- [Express.js](https://expressjs.com/)
-- [MongoDB](https://www.mongodb.com/)
 - [Vue.js](https://vuejs.org/)
 
 <!-- ROADMAP -->
@@ -118,7 +101,7 @@ Project Link:
 [issues-url]: https://github.com/hsborges/gittrends.app/issues
 [license-shield]:
   https://img.shields.io/github/license/hsborges/gittrends.app.svg?style=flat-square
-[license-url]: https://github.com/hsborges/gittrends.app/blob/master/LICENSE.txt
+[license-url]: https://github.com/hsborges/gittrends.app/blob/master/LICENSE
 [linkedin-shield]:
   https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
