@@ -17,6 +17,12 @@ http {
   server {
     listen       80;
     server_name  localhost;
+    gzip on;
+    gzip_vary on;
+    gzip_proxied expired no-cache no-store private auth;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml;
+    gzip_disable "MSIE [1-6]\.";
     location /api {
       rewrite /api/(.*) /${DOLAR}1  break;
       proxy_set_header Host ${DOLAR}host;
@@ -34,6 +40,7 @@ http {
       root   /app;
       index  index.html;
       try_files ${DOLAR}uri ${DOLAR}uri/ /index.html;
+      expires 7d;
     }
     error_page   500 502 503 504  /50x.html;
     location = /50x.html {

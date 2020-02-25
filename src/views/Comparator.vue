@@ -130,6 +130,7 @@
         </tbody>
       </table>
     </div>
+    <Share></Share>
     <Love class="flex flex-grow items-end mt-10"></Love>
   </div>
 </template>
@@ -144,10 +145,11 @@ import qs from "querystring";
 
 import Love from "@/components/Love.vue";
 import Search from "@/components/SearchBox.vue";
+import Share from "@/components/ShareButton.vue";
 import Timeseries from "@/components/StargazersTimeseries.vue";
 
 export default {
-  components: { Love, Search, Timeseries },
+  components: { Love, Search, Timeseries, Share },
   data() {
     return {
       languages: null,

@@ -170,6 +170,7 @@
       @dismiss="showDetails(null)"
       class="w-11/12 lg:w-4/6"
     ></Details>
+    <Share></Share>
     <Love class="flex flex-grow items-end mt-10"></Love>
   </div>
 </template>
@@ -183,11 +184,12 @@ import qs from "querystring";
 
 import Love from "@/components/Love.vue";
 import Search from "@/components/SearchBox.vue";
+import Share from "@/components/ShareButton.vue";
 import Details from "@/components/explorer/RepositoryDetails.vue";
 
 export default {
   name: "explorer",
-  components: { Love, Details, Search },
+  components: { Love, Details, Search, Share },
   data() {
     return {
       filter: null,
