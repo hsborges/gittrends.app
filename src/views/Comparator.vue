@@ -288,16 +288,18 @@ export default {
         name: _.startCase(data.name)
       }));
 
-      this.$gtag.event("select_content", {
-        content_type: "comparator",
-        content_id: repo.full_name
-      });
-
       this.loading = false;
       this.repositories.push(repo);
       this.$refs.searchBar.clear();
       this.$refs.stargazersChart.addRepository(repo);
       this.updateUrl();
+      this.$gtag.event("compare", {
+        event_category: this.$route.path,
+        event_label: this.repositories
+          .sort((a, b) => a.stargazers_count - b.stargazers_count)
+          .map((r) => r.full_name)
+          .join(" & ")
+      });
     },
     remove(id) {
       this.repositories = this.repositories.filter((r) => r._id !== id);

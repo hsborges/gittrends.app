@@ -8,12 +8,12 @@
       v-model="query"
       :id="id || 'search'"
       :placeholder="placeholder || 'e.g., twbs/bootstrap'"
-      @keypress.enter="$emit('search', query)"
+      @keypress.enter="search"
     />
     <a
       class="flex cursor-pointer text-sm px-1 text-secondary-400 hover:text-secondary"
     >
-      <i class="fas fa-search py-1" @click="$emit('search', query)"></i>
+      <i class="fas fa-search py-1" @click="search"></i>
     </a>
     <a
       class="flex cursor-pointer text-sm pr-1 sm:pr-2 text-secondary-400 hover:text-secondary"
@@ -33,6 +33,13 @@ export default {
     return { query: null };
   },
   methods: {
+    search() {
+      this.$gtag.event("search", {
+        event_category: this.$route.path,
+        event_label: this.query
+      });
+      this.$emit("search", this.query);
+    },
     clear() {
       this.query = null;
       this.$emit("clear");

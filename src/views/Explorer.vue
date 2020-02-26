@@ -255,11 +255,6 @@ export default {
 
           if (!_.isEqual(this.$route.query, queryParams))
             this.$router.replace({ query: queryParams });
-
-          this.$gtag.event("search", {
-            search_term: this.searchQuery(),
-            path: this.$route.path
-          });
         }
       );
     },
@@ -278,21 +273,15 @@ export default {
         (r) => r._id
       );
       this.meta = _meta;
-
-      this.$gtag.event("search", {
-        search_term: this.searchQuery(),
-        path: this.$route.path
-      });
     },
     async showDetails(repo) {
       this.repository = repo;
       if (repo) {
         const query = { ...this.$route.query, open: repo.full_name };
         this.$router.replace({ query });
-        this.$gtag.pageview({ page_path: `/explore?${query}` });
-        this.$gtag.event("select_content", {
-          content_type: "explorer",
-          content_id: repo.full_name
+        this.$gtag.event("open", {
+          event_category: this.$route.path,
+          event_label: repo.full_name
         });
       } else {
         this.$router.replace({ query: _.omit(this.$route.query, "open") });
@@ -368,6 +357,12 @@ export default {
         this.reset();
         this.applyFilter();
       }
+    },
+    "filter.language": function() {
+      this.$gtag.event("filter_language", {
+        event_category: this.$route.path,
+        event_label: this.filter.language
+      });
     }
   }
 };

@@ -28,11 +28,11 @@
         v-if="repositories"
         class="flex flex-wrap justify-center w-full sm:w-5/6 md:w-4/6"
       >
-        <router-link
+        <a
           v-for="repo in repositories"
           :key="repo._id"
-          class="flex border border-primary rounded m-1 sm:m-2"
-          :to="`/explore?open=${repo.full_name}`"
+          class="flex border border-primary rounded m-1 sm:m-2 cursor-pointer"
+          @click="select(repo)"
         >
           <div class="flex flex-grow items-center text-sm px-2">
             <span class="hidden lg:block leading-none">
@@ -51,7 +51,7 @@
               {{ format(repo.stargazers_count) }}
             </span>
           </div>
-        </router-link>
+        </a>
       </div>
     </div>
     <Love class="mt-12"></Love>
@@ -80,7 +80,14 @@ export default {
       .then((response) => (this.repositories = response.data.result));
   },
   methods: {
-    search: function(value) {
+    select(repo) {
+      this.$gtag.event("open_card", {
+        event_category: this.$route.path,
+        event_label: repo.full_name
+      });
+      this.$router.push(`/explore?open=${repo.full_name}`);
+    },
+    search(value) {
       this.$router.push(`/explore?query=${value || ""}`);
     },
     format: (v) => (v < 1000 ? v : numeral(v).format("0.0a")),
