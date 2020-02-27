@@ -40,7 +40,7 @@ http {
       root   /app;
       index  index.html;
       try_files ${DOLAR}uri ${DOLAR}uri/ /index.html;
-      expires 7d;
+      expires 1d;
     }
     error_page   500 502 503 504  /50x.html;
     location = /50x.html {
