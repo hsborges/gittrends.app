@@ -51,7 +51,6 @@ export default {
   },
   watch: {
     "$route.fullPath": function() {
-      console.log({ to: this.$route.fullPath });
       this.$ga.page(this.$route.fullPath);
     }
   }
