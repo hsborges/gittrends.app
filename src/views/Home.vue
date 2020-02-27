@@ -81,10 +81,7 @@ export default {
   },
   methods: {
     select(repo) {
-      this.$gtag.event("open_card", {
-        event_category: this.$route.path,
-        event_label: repo.full_name
-      });
+      this.$ga.event(this.$route.path, "open_card", repo.full_name);
       this.$router.push(`/explore?open=${repo.full_name}`);
     },
     search(value) {

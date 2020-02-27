@@ -45,6 +45,15 @@ export default {
     closeAlert() {
       this.showAlert = false;
     }
+  },
+  created() {
+    this.$ga.page(this.$route.fullPath);
+  },
+  watch: {
+    "$route.fullPath": function() {
+      console.log({ to: this.$route.fullPath });
+      this.$ga.page(this.$route.fullPath);
+    }
   }
 };
 </script>

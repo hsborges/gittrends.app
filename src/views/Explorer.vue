@@ -279,10 +279,7 @@ export default {
       if (repo) {
         const query = { ...this.$route.query, open: repo.full_name };
         this.$router.replace({ query });
-        this.$gtag.event("open", {
-          event_category: this.$route.path,
-          event_label: repo.full_name
-        });
+        this.$ga.event(this.$route.path, "open", repo.full_name);
       } else {
         this.$router.replace({ query: _.omit(this.$route.query, "open") });
       }
@@ -359,10 +356,7 @@ export default {
       }
     },
     "filter.language": function() {
-      this.$gtag.event("filter_language", {
-        event_category: this.$route.path,
-        event_label: this.filter.language
-      });
+      this.$ga.event(this.$route.path, "filter_language", this.filter.language);
     }
   }
 };

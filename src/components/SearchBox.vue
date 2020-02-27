@@ -34,10 +34,7 @@ export default {
   },
   methods: {
     search() {
-      this.$gtag.event("search", {
-        event_category: this.$route.path,
-        event_label: this.query
-      });
+      this.$ga.event(this.$route.path, "search", this.query);
       this.$emit("search", this.query);
     },
     clear() {

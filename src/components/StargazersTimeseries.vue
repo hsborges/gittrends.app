@@ -146,11 +146,12 @@ export default {
         )
         .slice(0, this.type === "cumulative" ? stargazers.length : -1);
     },
-    sendAnalytics() {
-      this.$gtag.event("chart_update", {
-        event_category: this.$route.path,
-        event_label: qs.encode({ type: this.type, scale: this.scale })
-      });
+    track() {
+      this.$ga.event(
+        this.$route.path,
+        "chart_update",
+        qs.encode({ type: this.type, scale: this.scale })
+      );
     }
   },
   computed: {
@@ -165,12 +166,12 @@ export default {
     scale() {
       this.chart.options.scales.yAxes[0].type = this.scale;
       this.chart.update();
-      this.sendAnalytics();
+      this.track();
     },
     type() {
       this.updateDatasets();
       this.chart.update();
-      this.sendAnalytics();
+      this.track();
     },
     repositories() {
       this.updateDatasets();

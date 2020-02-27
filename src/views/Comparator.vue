@@ -293,13 +293,14 @@ export default {
       this.$refs.searchBar.clear();
       this.$refs.stargazersChart.addRepository(repo);
       this.updateUrl();
-      this.$gtag.event("compare", {
-        event_category: this.$route.path,
-        event_label: this.repositories
+      this.$ga.event(
+        this.$route.path,
+        "compare",
+        this.repositories
           .sort((a, b) => a.stargazers_count - b.stargazers_count)
           .map((r) => r.full_name)
           .join(" & ")
-      });
+      );
     },
     remove(id) {
       this.repositories = this.repositories.filter((r) => r._id !== id);
@@ -312,8 +313,6 @@ export default {
       setTimeout(() => (this.message = null), 3000);
     },
     async find(v) {
-      this.$gtag.event("search", { search_term: v, path: this.$route.path });
-
       if (!v) return;
       else if (v.length < 3)
         return this.showMessage("You must provide at least 4 characters");

@@ -15,11 +15,7 @@ export default {
         "_blank",
         "resizable,scrollbars,status,width=650,height=350"
       );
-
-      this.$gtag.event("share", {
-        event_category: this.$route.path,
-        event_label: qs.encode(this.$route.query)
-      });
+      this.$ga.event(this.$route.path, "share", qs.encode(this.$route.query));
     }
   },
   computed: {
