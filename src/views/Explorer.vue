@@ -150,7 +150,7 @@
       </div>
     </div>
     <div
-      v-if="!repository && meta && filter.page < meta.pages_count - 1"
+      v-if="hasMore"
       class="paginator flex justify-center text-sm sm:text-base w-11/12 lg:w-4/6"
     >
       <button
@@ -259,6 +259,8 @@ export default {
       );
     },
     async loadMore() {
+      if (!this.hasMore || this.filter.loading) return;
+
       this.filter.page += 1;
       this.filter.loading = true;
 
@@ -344,6 +346,15 @@ export default {
   },
   destroyed() {
     window.removeEventListener("scroll", this.handleScroll);
+  },
+  computed: {
+    hasMore() {
+      return (
+        !this.repository &&
+        this.meta &&
+        this.filter.page < this.meta.pages_count - 1
+      );
+    }
   },
   watch: {
     "$route.query": function(to) {
